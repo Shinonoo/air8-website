@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us | AIR8 Industries, Inc.</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/../index.html" class="logo">AIR<span>8</span> Industries</a>
+      <ul class="nav-links">
+        <li><a href="/../index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="products.html">Products</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <section class="page-header">
+    <h1>Contact Us</h1>
+  </section>
+
+  <section class="contact-section">
+    <div class="contact-info">
+      <h2>Get In Touch</h2>
+      <p><strong>Address:</strong> 8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila</p>
+      <p><strong>Telephone:</strong> (028) 782-6117</p>
+      <p><strong>Telefax:</strong> (028) 828-2496</p>
+    </div>
+
+    <form id="contactForm" class="contact-form">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="phone">Phone Number</label>
+      <input type="text" id="phone" name="phone" />
+
+      <label for="product">Product of Interest</label>
+      <select id="product" name="product">
+        <option value="">General Inquiry</option>
+        <option value="abie-tiger-sound-attenuator">Abie Tiger Sound Attenuator</option>
+        <option value="abie-tiger-vibration-isolators">Abie Tiger Vibration Isolators</option>
+        <option value="elta-fans">Elta Fans</option>
+      </select>
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit" class="btn-primary">Send Inquiry</button>
+      <p id="formStatus"></p>
+    </form>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h3>AIR8 Industries, Inc.</h3>
+        <p>8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila</p>
+        <p>Tel: (028) 782-6117 | Telefax: (028) 828-2496</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/../index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="abie-tiger-sound-attenuator.html">Sound Attenuator</a></li>
+          <li><a href="abie-tiger-vibration-isolators.html">Vibration Isolators</a></li>
+          <li><a href="elta-fans.html">Elta Fans</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AIR8 Industries, Inc. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
