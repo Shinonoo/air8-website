@@ -57,6 +57,7 @@ form.addEventListener("submit", async function (event) {
     email: form.email.value.trim(),
     phone: form.phone.value.trim(),
     company: form.company.value.trim(),
+    service: form.service.value,
     message: form.message.value.trim(),
   };
 
@@ -95,3 +96,18 @@ function showStatus(text, type) {
   if (type === "ok") statusEl.classList.add("is-ok");
   if (type === "error") statusEl.classList.add("is-error");
 }
+
+/* ---- 4. GUIDED QUOTE LINKS --------------------------------- */
+// Service cards / audience cards link to #contact with a data-service
+// attribute (e.g. "Repair & Maintenance"). Clicking one scrolls to the
+// form AND pre-selects that service — the visitor lands on a form that
+// already knows what they came for.
+document.querySelectorAll('a[data-service]').forEach(function (link) {
+  link.addEventListener("click", function () {
+    const select = document.getElementById("service");
+    if (!select) return;
+    const wanted = link.dataset.service;
+    const match = Array.from(select.options).find(function (o) { return o.value === wanted; });
+    select.value = match ? wanted : "Other";
+  });
+});

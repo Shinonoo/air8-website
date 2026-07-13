@@ -373,23 +373,118 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .field { margin-bottom: 1.1rem; display: grid; gap: 0.4rem; }
 .field label { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
 .field__optional { font-weight: 400; color: var(--steel); }
-.field input, .field textarea {
+.field input, .field textarea, .field select {
   font-family: var(--font-body); font-size: 1rem;
   padding: 0.7rem 0.85rem; border: 1.5px solid var(--line);
   border-radius: 8px; background: #fbfcfe; color: var(--ink);
 }
-.field input:focus, .field textarea:focus { border-color: var(--navy); }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--navy); }
 .form__status { margin-top: 1rem; font-size: 0.92rem; min-height: 1.2em; }
 .form__status.is-ok { color: #197a4b; }
 .form__status.is-error { color: #c23b3b; }
 
 /* FOOTER */
-.footer { background: var(--ink); color: #aeb9c9; padding: 3rem 0; }
-.footer__inner { display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; flex-wrap: wrap; }
+.footer { background: var(--ink); color: #aeb9c9; padding: 3.5rem 0 0; }
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.4fr;
+  gap: 2.5rem;
+  padding-bottom: 2.5rem;
+}
 .brand__mark--footer { color: #fff; }
-.footer__tag { font-size: 0.9rem; margin-top: 0.4rem; }
-.footer__meta { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; text-align: right; }
-.footer__meta a:hover { color: #fff; }
+.footer__tag { font-size: 0.9rem; margin-top: 0.4rem; max-width: 28ch; }
+.footer__heading {
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #7c8aa0; margin-bottom: 0.9rem;
+}
+.footer__col { display: flex; flex-direction: column; gap: 0.55rem; font-size: 0.9rem; }
+.footer__col a:hover { color: #fff; }
+.footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.25rem; padding-bottom: 1.5rem;
+  font-size: 0.8rem; color: #7c8aa0;
+}
+
+/* STATS BAND — trust-at-a-glance strip under the partner logos */
+.stats { background: var(--navy); color: #fff; }
+.stats__inner {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2rem; padding-top: 2.4rem; padding-bottom: 2.4rem;
+}
+.stat { text-align: center; }
+.stat__value {
+  display: block; font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 700; color: var(--amber);
+  line-height: 1.1;
+}
+.stat__label { display: block; margin-top: 0.35rem; font-size: 0.9rem; color: #c8d3e4; }
+
+/* Section intro line under a title (services etc.) */
+.section__lead { color: var(--steel); max-width: 60ch; margin-top: 0.9rem; }
+
+/* SERVICE CARDS — a card with one clear action at the bottom */
+.card--service { display: flex; flex-direction: column; }
+.card--service .card__body { flex: 1; margin-bottom: 1.4rem; }
+.card__cta { font-weight: 600; color: var(--navy); }
+.card__cta::after { content: " →"; }
+.card__cta:hover { color: var(--amber); }
+
+/* AUDIENCE CARDS — guided paths per visitor type */
+.audience-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 2rem;
+  display: flex; flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.audience-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(15, 27, 45, 0.08); }
+.audience-card__title { font-size: 1.25rem; color: var(--navy); margin-bottom: 0.6rem; }
+.audience-card__body { color: var(--steel); flex: 1; margin-bottom: 1.5rem; }
+.btn--block { display: block; text-align: center; }
+
+/* PROCESS — the 3-step "how it works" ladder */
+.process {
+  list-style: none; padding: 0; margin: 2.75rem 0 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+  counter-reset: step;
+}
+.process__step {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 2rem; position: relative;
+}
+.process__num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.3rem; height: 2.3rem; border-radius: 50%;
+  background: var(--navy); color: var(--amber);
+  font-family: var(--font-display); font-weight: 700; font-size: 1.05rem;
+  margin-bottom: 1.1rem;
+}
+.process__title { font-size: 1.15rem; color: var(--navy); margin-bottom: 0.5rem; }
+.process__body { color: var(--steel); font-size: 0.95rem; }
+.process__more { text-align: center; margin-top: 2.5rem; }
+
+/* FAQ — native <details> accordion */
+.container--narrow { max-width: 760px; }
+.faq { margin-top: 2.5rem; display: grid; gap: 0.85rem; }
+.faq__item {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; padding: 0;
+  overflow: hidden;
+}
+.faq__item[open] { border-color: var(--navy); }
+.faq__q {
+  cursor: pointer; list-style: none;
+  padding: 1.1rem 3rem 1.1rem 1.4rem;
+  font-weight: 600; color: var(--ink); position: relative;
+}
+.faq__q::-webkit-details-marker { display: none; }
+.faq__q::after {
+  content: "+"; position: absolute; right: 1.3rem; top: 50%;
+  transform: translateY(-50%); font-size: 1.35rem; color: var(--steel);
+  transition: transform 0.15s ease;
+}
+.faq__item[open] .faq__q::after { content: "–"; color: var(--amber); }
+.faq__q:hover { color: var(--navy); }
+.faq__a { padding: 0 1.4rem 1.25rem; color: var(--steel); line-height: 1.65; }
 
 /* Scroll-reveal starting state (JS removes this once element is visible) */
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
@@ -402,6 +497,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .cards--3 { grid-template-columns: 1fr; }
   .cards--triple { grid-template-columns: 1fr; }
   .values { grid-template-columns: 1fr; }
+  .process { grid-template-columns: 1fr; }
+  .stats__inner { gap: 1rem; padding-top: 1.8rem; padding-bottom: 1.8rem; }
+  /* Fixed size (not the desktop clamp) so a word-y stat like "PH-wide"
+     stays on one line beside the numeric ones */
+  .stat__value { font-size: 1.35rem; white-space: nowrap; }
+  .stat__label { font-size: 0.78rem; }
+  .footer__grid { grid-template-columns: 1fr; gap: 2rem; }
 
   /* Shrink the distributor strip so Elta Fans / Abie Tiger / Starduct
      still fit in one row on narrow screens instead of wrapping. */

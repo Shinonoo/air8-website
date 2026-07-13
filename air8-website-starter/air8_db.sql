@@ -283,6 +283,7 @@ CREATE TABLE `inquiries` (
   `company` varchar(160) DEFAULT NULL,
   `message` text DEFAULT NULL,
   `product_name` varchar(255) DEFAULT NULL,
+  `service_type` varchar(60) DEFAULT NULL,
   `source` enum('contact','product') NOT NULL DEFAULT 'contact',
   `status` enum('new','contacted','quoted','closed') NOT NULL DEFAULT 'new',
   `email_sent` tinyint(1) NOT NULL DEFAULT 0,

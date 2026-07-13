@@ -462,7 +462,7 @@ async function loadInquiries() {
               ${i.email}${i.phone ? " · " + i.phone : ""}${i.company ? " · " + i.company : ""}
             </span>
           </td>
-          <td>${i.product_name || "—"}</td>
+          <td>${i.product_name || i.service_type || "—"}</td>
           <td style="max-width:280px;">${i.message || "<em>(catalogue request)</em>"}</td>
           <td>${i.email_sent ? '<span class="pill pill--ok">Sent</span>' : '<span class="pill">Not sent</span>'}</td>
           <td><select class="inquiry-status" data-id="${i.id}">${statusOptions}</select></td>

@@ -52,8 +52,7 @@
       </button>
 
       <nav class="nav" id="navMenu" aria-label="Main">
-        <a href="#about">About</a>
-        <a href="#capabilities">What we do</a>
+        <a href="#services">Services</a>
         <div class="nav__item">
           <a href="products.html">Products</a>
           <div class="nav__dropdown">
@@ -62,7 +61,8 @@
             <a href="products.html?brand=Starduct">Starduct</a>
           </div>
         </div>
-        <a href="#values">Why Air 8</a>
+        <a href="#about">About</a>
+        <a href="#faq">FAQ</a>
         <a class="nav__cta" href="#contact">Get a quote</a>
       </nav>
     </div>
@@ -79,25 +79,27 @@
       <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
 
       <div class="container hero__inner">
-        <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span><span data-content-key="home.hero.eyebrow">Ventilation &amp; Acoustic Solutions</span></p>
+        <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span><span data-content-key="home.hero.eyebrow">Ventilation · Acoustics · Ductwork</span></p>
         <!-- hero-animation.js rebuilds this into per-letter spans for the reveal
              animation; the plain text below is what shows if JS doesn't run.
              Its editable copy is home.hero.title (read by hero-animation.js). -->
         <h1 class="hero__title" id="heroTitle">We move air.<br />We control sound.</h1>
         <p class="hero__lead" data-content-key="home.hero.lead">
-          Air 8 Industries Inc. supplies reliable, energy-efficient fans, blowers and
-          acoustic systems for industrial, commercial and residential spaces across the Philippines.
+          Air 8 Industries supplies and services fans, blowers, acoustic systems and ductwork
+          for homes, buildings and industry across the Philippines — with engineering support
+          from enquiry to installation.
         </p>
+        <!-- ONE primary action: request a quote. Browsing is the secondary path. -->
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#products" data-content-key="home.hero.cta_primary">Explore products</a>
-          <a class="btn btn--ghost" href="#contact" data-content-key="home.hero.cta_secondary">Talk to us</a>
+          <a class="btn btn--primary" href="#contact" data-content-key="home.hero.cta_primary">Get a free quote</a>
+          <a class="btn btn--ghost" href="products.html" data-content-key="home.hero.cta_secondary">Browse products</a>
         </div>
         <div class="hero__tags">
-          <span>Industrial Fans</span>
+          <span>Supply</span>
           <span class="dot" aria-hidden="true"></span>
-          <span>Blowers</span>
+          <span>Installation</span>
           <span class="dot" aria-hidden="true"></span>
-          <span>Sound Attenuators</span>
+          <span>Repair &amp; Maintenance</span>
         </div>
       </div>
     </section>
@@ -124,6 +126,114 @@
             <span class="partner__origin">Vietnam · Ductwork &amp; MEP Accessories</span>
             <img class="partner__logo" src="images/starduct/starduct_logo.webp" alt="Starduct logo" />
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         STATS BAND — quick, honest trust signals under the hero.
+         Numbers are editable in Admin -> Page text -> Stats strip.
+         ============================================================ -->
+    <section class="stats" aria-label="Company at a glance">
+      <div class="container stats__inner">
+        <div class="stat reveal">
+          <span class="stat__value" data-content-key="home.stats.item1_value">3</span>
+          <span class="stat__label" data-content-key="home.stats.item1_label">International brand partners</span>
+        </div>
+        <div class="stat reveal">
+          <span class="stat__value" data-content-key="home.stats.item2_value">160+</span>
+          <span class="stat__label" data-content-key="home.stats.item2_label">Products ready to quote</span>
+        </div>
+        <div class="stat reveal">
+          <span class="stat__value" data-content-key="home.stats.item3_value">PH-wide</span>
+          <span class="stat__label" data-content-key="home.stats.item3_label">Delivery &amp; project support</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SERVICES — what we DO for you (not just what we sell).
+         Each card has exactly one action, which pre-selects the
+         matching service in the quote form (see main.js).
+         ============================================================ -->
+    <section class="section" id="services">
+      <div class="container">
+        <p class="eyebrow" data-content-key="home.services.eyebrow">Services</p>
+        <h2 class="section__title" data-content-key="home.services.title">Supply, install, maintain — one team.</h2>
+        <p class="section__lead" data-content-key="home.services.lead">
+          From a single exhaust fan to a full building package, we handle the equipment and the work around it.
+        </p>
+
+        <div class="cards cards--triple">
+          <article class="card card--service reveal">
+            <p class="card__index">01</p>
+            <h3 class="card__title" data-content-key="home.services.card1_title">Equipment supply &amp; installation</h3>
+            <p class="card__body" data-content-key="home.services.card1_body">
+              The right fan, silencer or duct system for your space — supplied from three
+              international brands and installed to specification.
+            </p>
+            <a class="card__cta" href="#contact" data-service="Installation" data-content-key="home.services.card1_cta">Request installation</a>
+          </article>
+
+          <article class="card card--service reveal">
+            <p class="card__index">02</p>
+            <h3 class="card__title" data-content-key="home.services.card2_title">Repair &amp; maintenance</h3>
+            <p class="card__body" data-content-key="home.services.card2_body">
+              Keep ventilation and noise control performing: inspection, parts replacement and
+              preventive maintenance programs for buildings and plants.
+            </p>
+            <a class="card__cta" href="#contact" data-service="Repair & Maintenance" data-content-key="home.services.card2_cta">Book maintenance</a>
+          </article>
+
+          <article class="card card--service reveal">
+            <p class="card__index">03</p>
+            <h3 class="card__title" data-content-key="home.services.card3_title">Quotation &amp; equipment selection</h3>
+            <p class="card__body" data-content-key="home.services.card3_body">
+              Not sure what you need? Send your requirements or plans and our engineers will
+              size and quote the right equipment — free of charge.
+            </p>
+            <a class="card__cta" href="#contact" data-service="Quotation" data-content-key="home.services.card3_cta">Get a free quote</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         WHO WE SERVE — guided paths: each visitor type gets ONE
+         obvious next step instead of hunting through the site.
+         ============================================================ -->
+    <section class="section section--tint" id="audience">
+      <div class="container">
+        <p class="eyebrow eyebrow--center" data-content-key="home.audience.eyebrow">Who we serve</p>
+        <h2 class="section__title section__title--center" data-content-key="home.audience.title">Tell us who you are — we'll point you the right way.</h2>
+
+        <div class="cards cards--triple">
+          <article class="audience-card reveal">
+            <h3 class="audience-card__title" data-content-key="home.audience.card1_title">Homeowners</h3>
+            <p class="audience-card__body" data-content-key="home.audience.card1_body">
+              Quiet, efficient ventilation for kitchens, bathrooms and living spaces — with help
+              choosing the right size.
+            </p>
+            <a class="btn btn--ghost btn--block" href="products.html" data-content-key="home.audience.card1_cta">Browse residential fans</a>
+          </article>
+
+          <article class="audience-card reveal">
+            <h3 class="audience-card__title" data-content-key="home.audience.card2_title">Property managers</h3>
+            <p class="audience-card__body" data-content-key="home.audience.card2_body">
+              Replacements and maintenance programs for buildings, car parks and common areas —
+              keep tenants comfortable and compliant.
+            </p>
+            <a class="btn btn--ghost btn--block" href="#contact" data-service="Repair & Maintenance" data-content-key="home.audience.card2_cta">Book maintenance</a>
+          </article>
+
+          <article class="audience-card reveal">
+            <h3 class="audience-card__title" data-content-key="home.audience.card3_title">Commercial &amp; industrial</h3>
+            <p class="audience-card__body" data-content-key="home.audience.card3_body">
+              Engineered airflow, smoke management and acoustic packages for projects of any
+              scale, specified with our brand partners.
+            </p>
+            <a class="btn btn--ghost btn--block" href="#contact" data-service="Quotation" data-content-key="home.audience.card3_cta">Discuss your project</a>
+          </article>
         </div>
       </div>
     </section>
@@ -245,6 +355,48 @@
     </section>
 
     <!-- ============================================================
+         HOW IT WORKS — removes friction: show the path from
+         "I have a problem" to "equipment installed" in 3 steps.
+         ============================================================ -->
+    <section class="section section--tint" id="process">
+      <div class="container">
+        <p class="eyebrow eyebrow--center" data-content-key="home.process.eyebrow">How it works</p>
+        <h2 class="section__title section__title--center" data-content-key="home.process.title">From enquiry to installed equipment in three steps.</h2>
+
+        <ol class="process">
+          <li class="process__step reveal">
+            <span class="process__num" aria-hidden="true">1</span>
+            <h3 class="process__title" data-content-key="home.process.step1_title">Tell us what you need</h3>
+            <p class="process__body" data-content-key="home.process.step1_body">
+              Send the quote form, call, or email — a product name, a problem to solve, or full
+              project plans all work.
+            </p>
+          </li>
+          <li class="process__step reveal">
+            <span class="process__num" aria-hidden="true">2</span>
+            <h3 class="process__title" data-content-key="home.process.step2_title">We size &amp; quote</h3>
+            <p class="process__body" data-content-key="home.process.step2_body">
+              Our team reviews your requirement, selects the right equipment from our brands,
+              and sends you a formal quotation.
+            </p>
+          </li>
+          <li class="process__step reveal">
+            <span class="process__num" aria-hidden="true">3</span>
+            <h3 class="process__title" data-content-key="home.process.step3_title">Delivery &amp; aftercare</h3>
+            <p class="process__body" data-content-key="home.process.step3_body">
+              We deliver, support installation, and stay available for maintenance and parts
+              long after handover.
+            </p>
+          </li>
+        </ol>
+
+        <div class="process__more">
+          <a class="btn btn--primary" href="#contact" data-service="Quotation" data-content-key="home.process.cta">Start your quote</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
          VALUES — condensed from the company profile.
          ============================================================ -->
     <section class="section section--dark" id="values">
@@ -261,16 +413,66 @@
     </section>
 
     <!-- ============================================================
+         FAQ — content-first: answer the questions people actually
+         email about, before they have to ask. Native <details> =
+         accessible accordion with zero JavaScript.
+         ============================================================ -->
+    <section class="section" id="faq">
+      <div class="container container--narrow">
+        <p class="eyebrow eyebrow--center" data-content-key="home.faq.eyebrow">FAQ</p>
+        <h2 class="section__title section__title--center" data-content-key="home.faq.title">Common questions, answered.</h2>
+
+        <div class="faq">
+          <details class="faq__item reveal">
+            <summary class="faq__q" data-content-key="home.faq.q1">Do you work with homeowners, or only companies?</summary>
+            <p class="faq__a" data-content-key="home.faq.a1">
+              Both. We supply single residential fans just as happily as full commercial
+              packages — and we'll help you pick the right size either way.
+            </p>
+          </details>
+          <details class="faq__item reveal">
+            <summary class="faq__q" data-content-key="home.faq.q2">How do I get a quotation?</summary>
+            <p class="faq__a" data-content-key="home.faq.a2">
+              Send the form below with what you need (a product name, a problem, or project
+              plans). Our team reviews it and replies with a formal quotation.
+            </p>
+          </details>
+          <details class="faq__item reveal">
+            <summary class="faq__q" data-content-key="home.faq.q3">Do you install the equipment you supply?</summary>
+            <p class="faq__a" data-content-key="home.faq.a3">
+              Yes — choose supply-and-install or supply-only. We also service and maintain
+              equipment we've delivered.
+            </p>
+          </details>
+          <details class="faq__item reveal">
+            <summary class="faq__q" data-content-key="home.faq.q4">Which areas do you serve?</summary>
+            <p class="faq__a" data-content-key="home.faq.a4">
+              We're based in Parañaque, Metro Manila, and deliver and support projects nationwide.
+            </p>
+          </details>
+          <details class="faq__item reveal">
+            <summary class="faq__q" data-content-key="home.faq.q5">Which brands do you carry?</summary>
+            <p class="faq__a" data-content-key="home.faq.a5">
+              We're the authorized distributor of Elta Fans (Malaysia) for fans &amp; blowers,
+              Abie Tiger (Thailand) for acoustic solutions, and Starduct (Vietnam) for ductwork
+              &amp; MEP accessories.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
          CONTACT — the only interactive part. The form talks to our backend.
          ============================================================ -->
     <section class="section" id="contact">
       <div class="container grid-2 grid-2--contact">
         <div>
-          <p class="eyebrow" data-content-key="home.contact.eyebrow">Contact</p>
-          <h2 class="section__title" data-content-key="home.contact.title">Tell us what you need.</h2>
+          <p class="eyebrow" data-content-key="home.contact.eyebrow">Get a quote</p>
+          <h2 class="section__title" data-content-key="home.contact.title">Request a free quotation.</h2>
           <p class="prose" data-content-key="home.contact.intro">
-            For details about services, pricing or availability, send us a message and our
-            team will get back to you.
+            Tell us what you need — our team reviews every enquiry and gets back to you with
+            pricing, availability and honest advice.
           </p>
 
           <ul class="contact-details">
@@ -306,12 +508,24 @@
             <input type="text" id="company" name="company" autocomplete="organization" />
           </div>
 
+          <!-- Routes the enquiry: also auto-selected when a visitor arrives via a
+               service card's "Request installation" / "Book maintenance" link. -->
           <div class="field">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="4" required></textarea>
+            <label for="service">What do you need?</label>
+            <select id="service" name="service">
+              <option value="Quotation">Product quotation</option>
+              <option value="Installation">Supply &amp; installation</option>
+              <option value="Repair & Maintenance">Repair &amp; maintenance</option>
+              <option value="Other">Something else</option>
+            </select>
           </div>
 
-          <button type="submit" class="btn btn--primary" id="submitBtn">Send message</button>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" required placeholder="e.g. I need an exhaust fan for a 40 sqm commercial kitchen…"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary" id="submitBtn">Request my quote</button>
 
           <!-- This empty box gets filled by JS with a success or error message. -->
           <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
@@ -325,15 +539,27 @@
        FOOTER
        ============================================================ -->
   <footer class="footer">
-    <div class="container footer__inner">
+    <div class="container footer__grid">
       <div>
         <span class="brand__mark brand__mark--footer">AIR8</span>
-        <p class="footer__tag" data-content-key="home.footer.tag">Ventilation &amp; acoustic solutions.</p>
+        <p class="footer__tag" data-content-key="home.footer.tag">Ventilation, acoustic &amp; ductwork solutions.</p>
       </div>
-      <div class="footer__meta">
+      <nav class="footer__col" aria-label="Footer">
+        <p class="footer__heading">Explore</p>
+        <a href="#services">Services</a>
+        <a href="products.html">Products</a>
+        <a href="#about">About us</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="footer__col">
+        <p class="footer__heading">Contact</p>
         <a href="mailto:sales@air8industries.com">sales@air8industries.com</a>
-        <span>© <span id="year"></span> Air 8 Industries Inc.</span>
+        <span data-content-key="home.contact.phone">(028) 828-2496 · (028) 782-6117</span>
+        <span data-content-key="home.contact.address">8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila</span>
       </div>
+    </div>
+    <div class="container footer__bottom">
+      <span>© <span id="year"></span> Air 8 Industries Inc.</span>
     </div>
   </footer>
 

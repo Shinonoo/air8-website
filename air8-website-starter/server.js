@@ -92,7 +92,7 @@ app.use("/api/admin", adminRouter);
 app.post("/api/contact", async (req, res) => {
   // req.body is the data the visitor typed. Pull out each field.
   // "product" is included when the inquiry came from a product popup.
-  const { name, email, phone, company, message, product } = req.body || {};
+  const { name, email, phone, company, message, product, service } = req.body || {};
 
   // 1) Basic validation. Never trust data from the internet.
   //    A general contact needs a message; a product inquiry needs a product.
@@ -121,9 +121,9 @@ app.post("/api/contact", async (req, res) => {
   let inquiryId = null;
   try {
     const [result] = await pool.query(
-      `INSERT INTO inquiries (name, email, phone, company, message, product_name, source)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [name, email, phone || null, company || null, message || null, product || null, product ? "product" : "contact"]
+      `INSERT INTO inquiries (name, email, phone, company, message, product_name, service_type, source)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [name, email, phone || null, company || null, message || null, product || null, service ? String(service).slice(0, 60) : null, product ? "product" : "contact"]
     );
     inquiryId = result.insertId;
   } catch (err) {
@@ -151,7 +151,9 @@ app.post("/api/contact", async (req, res) => {
         text:
           `Name: ${name}\n` +
           `Email: ${email}\n` +
+          `Phone: ${phone || "-"}\n` +
           `Company: ${company || "-"}\n` +
+          `Service: ${service || "-"}\n` +
           `Product: ${product || "-"}\n\n` +
           `Message:\n${message || "(catalogue request)"}`,
       });
