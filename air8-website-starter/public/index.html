@@ -54,11 +54,30 @@
       <nav class="nav" id="navMenu" aria-label="Main">
         <a href="#services">Services</a>
         <div class="nav__item">
-          <a href="products.html">Products</a>
-          <div class="nav__dropdown">
-            <a href="products.html?brand=Elta+Fans">Elta Fans</a>
-            <a href="products.html?brand=Abie+Tiger">Abie Tiger</a>
-            <a href="products.html?brand=Starduct">Starduct</a>
+          <a href="products.html" aria-haspopup="true">Products</a>
+          <div class="nav__dropdown" role="menu" aria-label="Browse by brand">
+            <a href="products.html?brand=Elta+Fans" role="menuitem">
+              <span class="nav__drop-dot nav__drop-dot--elta" aria-hidden="true"></span>
+              <span class="nav__drop-text">
+                <span class="nav__drop-name">Elta Fans</span>
+                <span class="nav__drop-sub">Fans &amp; Blowers · Malaysia</span>
+              </span>
+            </a>
+            <a href="products.html?brand=Abie+Tiger" role="menuitem">
+              <span class="nav__drop-dot nav__drop-dot--abie" aria-hidden="true"></span>
+              <span class="nav__drop-text">
+                <span class="nav__drop-name">Abie Tiger</span>
+                <span class="nav__drop-sub">Acoustic Solutions · Thailand</span>
+              </span>
+            </a>
+            <a href="products.html?brand=Starduct" role="menuitem">
+              <span class="nav__drop-dot nav__drop-dot--starduct" aria-hidden="true"></span>
+              <span class="nav__drop-text">
+                <span class="nav__drop-name">Starduct</span>
+                <span class="nav__drop-sub">Ductwork &amp; MEP · Vietnam</span>
+              </span>
+            </a>
+            <a class="nav__drop-all" href="products.html" role="menuitem">View all products →</a>
           </div>
         </div>
         <a href="#about">About</a>

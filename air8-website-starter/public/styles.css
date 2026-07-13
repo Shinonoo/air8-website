@@ -190,28 +190,57 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .nav__item > a::after {
   content: "▾"; display: inline-block; margin-left: 0.3em;
   font-size: 0.7em; color: var(--steel);
+  transition: transform 0.2s ease, color 0.2s ease;
 }
+.nav__item:hover > a::after,
+.nav__item:focus-within > a::after { transform: rotate(180deg); color: var(--navy); }
 .nav__dropdown {
-  display: none;
-  flex-direction: column;
+  /* Stays in the DOM (not display:none) so it can fade/slide instead of
+     snapping. It's absolutely positioned, so keeping it laid out costs no
+     space; pointer-events:none makes the hidden menu unclickable. */
+  display: flex;
+  flex-direction: column; gap: 2px;
   /* Flush against the link (no margin-top gap) — a gap here is a dead
      zone the mouse crosses with nothing under it, which drops :hover
      and closes the menu before you can reach it. padding-top gives the
      same visual breathing room without breaking the hover chain. */
   position: absolute; top: 100%; left: 0;
-  min-width: 170px; padding: 0.65rem 0.4rem 0.4rem;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
-  box-shadow: 0 14px 28px rgba(15, 27, 45, 0.14);
+  min-width: 246px; padding: 0.5rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 18px 38px rgba(15, 27, 45, 0.16);
   z-index: 20;
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
 }
 .nav__item:hover .nav__dropdown,
 .nav__item:focus-within .nav__dropdown {
-  display: flex;
+  opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto;
 }
 .nav__dropdown a {
-  padding: 0.55rem 0.7rem; border-radius: 7px; white-space: nowrap;
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.6rem 0.7rem; border-radius: 9px; white-space: nowrap;
+  transition: background 0.15s ease, transform 0.15s ease;
 }
-.nav__dropdown a:hover { background: var(--bg); color: var(--navy); }
+.nav__dropdown a:hover { background: var(--bg); transform: translateX(2px); }
+.nav__drop-dot {
+  flex: none; width: 9px; height: 9px; border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(18, 48, 95, 0.06);
+}
+.nav__drop-dot--elta { background: #2f7ed8; }
+.nav__drop-dot--abie { background: #e8a13a; }
+.nav__drop-dot--starduct { background: #3fb27f; }
+.nav__drop-text { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; }
+.nav__drop-name { font-weight: 600; color: var(--ink); font-size: 0.95rem; }
+.nav__dropdown a:hover .nav__drop-name { color: var(--navy); }
+.nav__drop-sub { font-size: 0.75rem; color: var(--steel); font-weight: 400; }
+.nav__drop-all {
+  margin-top: 3px; padding-top: 0.65rem !important;
+  border-top: 1px solid var(--line); border-radius: 0 0 6px 6px !important;
+  font-size: 0.85rem; font-weight: 600; color: var(--navy);
+  justify-content: center;
+}
+.nav__drop-all:hover { color: var(--amber); }
 
 /* Hamburger button — hidden on desktop, shown on mobile (or a narrow
    desktop window, which is still mouse-driven, so it needs a hover cue
@@ -377,8 +406,23 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   font-family: var(--font-body); font-size: 1rem;
   padding: 0.7rem 0.85rem; border: 1.5px solid var(--line);
   border-radius: 8px; background: #fbfcfe; color: var(--ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--navy); }
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--navy); outline: none;
+  box-shadow: 0 0 0 3px rgba(18, 48, 95, 0.12);
+}
+/* Custom-styled select: strip the OS default arrow and paint our own
+   chevron so it looks identical across Chrome/Safari/Firefox/Windows. */
+.field select {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  cursor: pointer; padding-right: 2.4rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%2312305f' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.95rem center;
+}
+.field select:hover { border-color: var(--navy); }
+.field select::-ms-expand { display: none; }
 .form__status { margin-top: 1rem; font-size: 0.92rem; min-height: 1.2em; }
 .form__status.is-ok { color: #197a4b; }
 .form__status.is-error { color: #c23b3b; }
@@ -518,12 +562,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .nav__item { width: 100%; }
 
   /* No hover on touch — show the brand links inline under "Products"
-     instead of hiding them behind a hover state that can't be reached. */
+     instead of hiding them behind a hover state that can't be reached.
+     Reset the desktop fade/slide so the always-open list is fully shown. */
   .nav__dropdown {
-    display: flex; position: static; margin-top: 0;
-    border: none; box-shadow: none; padding: 0 0 0.4rem 1rem;
+    display: flex; position: static; margin-top: 0; min-width: 0;
+    border: none; box-shadow: none; padding: 0.2rem 0 0.4rem 0.6rem;
+    opacity: 1; visibility: visible; transform: none; pointer-events: auto;
   }
-  .nav__dropdown a { padding: 0.5rem 0; color: var(--steel); }
+  .nav__dropdown a { padding: 0.5rem 0; }
+  .nav__drop-sub { display: none; } /* keep the mobile list compact: brand names only */
+  .nav__drop-all { border-top: none; justify-content: flex-start; padding-top: 0.5rem !important; }
   /* .nav a's padding above wins over .nav__cta's own padding (same
      specificity, .nav a declared later) unless we out-specify it here —
      that was stripping the pill's side padding and letting the label
