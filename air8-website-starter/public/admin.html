@@ -55,6 +55,29 @@
       font-family: var(--font-mono); font-size: 0.85em;
       background: var(--bg); border-radius: 4px; padding: 0.1em 0.4em;
     }
+    /* Collapsible panel headers — bulk import & the add/edit form default
+       to closed so "All products" is visible without scrolling past them. */
+    .admin-collapse-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; background: none; border: 0; padding: 0; margin: 0;
+      font: inherit; text-align: left; cursor: pointer;
+    }
+    .admin-collapse-toggle h2 { margin-bottom: 0; }
+    .admin-collapse-icon {
+      font-size: 1.3rem; line-height: 1; color: var(--steel); flex: 0 0 auto;
+      transition: transform 0.15s ease;
+    }
+    .admin-collapse-toggle[aria-expanded="true"] .admin-collapse-icon { transform: rotate(45deg); }
+    .admin-collapse-body { margin-top: 1.25rem; }
+    .admin-filters {
+      display: flex; align-items: flex-end; gap: 0.75rem; flex-wrap: wrap;
+      margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line);
+    }
+    .admin-filters .toolbar__search { min-width: 220px; flex: 1 1 220px; }
+    .admin-filters .toolbar__group { gap: 0.6rem; }
+    .admin-results-count { font-size: 0.8rem; color: var(--steel); margin-bottom: 0.75rem; }
+    .admin-table th.is-sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+    .admin-table th.is-sortable:hover { color: var(--navy); }
   </style>
 </head>
 <body class="admin">
@@ -89,111 +112,161 @@
     <!-- PRODUCTS TAB -->
     <section id="productsTab">
       <div class="admin-panel">
-        <h2>Bulk import (CSV)</h2>
-        <p style="color:var(--steel); font-size:0.88rem; margin-bottom:1rem;">
-          Adding a lot of products? Paste or upload a CSV instead of filling the form below one at a time.
-          New brands/categories are created automatically. Re-importing the same
-          brand + name + code updates that product instead of duplicating it.
-        </p>
-        <p style="font-size:0.82rem; margin-bottom:1rem;">
-          <a href="/api/admin/products/bulk-import/template" download>Download a template CSV</a>
-          — columns: <code>brand, category, name, code, description, image, brochure, specs, featured, published</code>.
-          Multiple categories: separate with <code>|</code> (e.g. <code>Fans|Blowers</code>).
-          Specs: <code>label:value;label:value</code> (e.g. <code>diameter:315-2000mm;capacity:360000 m3/h</code>).
-        </p>
-        <div class="field">
-          <label for="bulkFile">Upload a .csv file <span class="field__optional">(or paste below)</span></label>
-          <input type="file" id="bulkFile" accept=".csv,text/csv" />
+        <button type="button" class="admin-collapse-toggle" id="bulkImportToggle" aria-expanded="false" aria-controls="bulkImportBody">
+          <h2>Bulk import (CSV)</h2>
+          <span class="admin-collapse-icon" aria-hidden="true">+</span>
+        </button>
+        <div id="bulkImportBody" class="admin-collapse-body admin-hidden">
+          <p style="color:var(--steel); font-size:0.88rem; margin-bottom:1rem;">
+            Adding a lot of products? Paste or upload a CSV instead of filling the form below one at a time.
+            New brands/categories are created automatically. Re-importing the same
+            brand + name + code updates that product instead of duplicating it.
+          </p>
+          <p style="font-size:0.82rem; margin-bottom:1rem;">
+            <a href="/api/admin/products/bulk-import/template" download>Download a template CSV</a>
+            — columns: <code>brand, category, name, code, description, image, brochure, specs, featured, published</code>.
+            Multiple categories: separate with <code>|</code> (e.g. <code>Fans|Blowers</code>).
+            Specs: <code>label:value;label:value</code> (e.g. <code>diameter:315-2000mm;capacity:360000 m3/h</code>).
+          </p>
+          <div class="field">
+            <label for="bulkFile">Upload a .csv file <span class="field__optional">(or paste below)</span></label>
+            <input type="file" id="bulkFile" accept=".csv,text/csv" />
+          </div>
+          <div class="field">
+            <label for="bulkCsv">Paste CSV</label>
+            <textarea id="bulkCsv" rows="6" placeholder="brand,category,name,code,description,image,brochure,specs,featured,published"></textarea>
+          </div>
+          <button type="button" class="btn btn--primary" id="bulkImportBtn">Import products</button>
+          <p class="form__status" id="bulkImportStatus" role="status" aria-live="polite"></p>
+          <div id="bulkImportErrors" class="admin-hidden" style="margin-top:0.75rem; font-size:0.82rem; color:#c23b3b; max-height:180px; overflow-y:auto;"></div>
         </div>
-        <div class="field">
-          <label for="bulkCsv">Paste CSV</label>
-          <textarea id="bulkCsv" rows="6" placeholder="brand,category,name,code,description,image,brochure,specs,featured,published"></textarea>
-        </div>
-        <button type="button" class="btn btn--primary" id="bulkImportBtn">Import products</button>
-        <p class="form__status" id="bulkImportStatus" role="status" aria-live="polite"></p>
-        <div id="bulkImportErrors" class="admin-hidden" style="margin-top:0.75rem; font-size:0.82rem; color:#c23b3b; max-height:180px; overflow-y:auto;"></div>
       </div>
 
       <div class="admin-panel">
-        <h2 id="productFormTitle">Add a product</h2>
-        <form id="productForm" novalidate>
-          <input type="hidden" id="pfId" />
-          <div class="admin-grid">
-            <div class="field">
-              <label for="pfBrand">Brand</label>
-              <select id="pfBrand" required></select>
+        <button type="button" class="admin-collapse-toggle" id="productFormToggle" aria-expanded="false" aria-controls="productFormBody">
+          <h2 id="productFormTitle">Add a product</h2>
+          <span class="admin-collapse-icon" aria-hidden="true">+</span>
+        </button>
+        <div id="productFormBody" class="admin-collapse-body admin-hidden">
+          <form id="productForm" novalidate>
+            <input type="hidden" id="pfId" />
+            <div class="admin-grid">
+              <div class="field">
+                <label for="pfBrand">Brand</label>
+                <select id="pfBrand" required></select>
+              </div>
+              <div class="field">
+                <label for="pfCode">Code / model</label>
+                <input type="text" id="pfCode" />
+              </div>
             </div>
-            <div class="field">
-              <label for="pfCode">Code / model</label>
-              <input type="text" id="pfCode" />
+            <div class="admin-inline">
+              <div class="field">
+                <label for="pfNewBrand">Add a new brand</label>
+                <input type="text" id="pfNewBrand" placeholder="e.g. New Brand Co." />
+              </div>
+              <button type="button" class="btn btn--ghost btn--small" id="pfAddBrand">Add brand</button>
             </div>
-          </div>
-          <div class="admin-inline">
+
             <div class="field">
-              <label for="pfNewBrand">Add a new brand</label>
-              <input type="text" id="pfNewBrand" placeholder="e.g. New Brand Co." />
+              <label for="pfName">Product name</label>
+              <input type="text" id="pfName" required />
             </div>
-            <button type="button" class="btn btn--ghost btn--small" id="pfAddBrand">Add brand</button>
-          </div>
 
-          <div class="field">
-            <label for="pfName">Product name</label>
-            <input type="text" id="pfName" required />
-          </div>
+            <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.4rem;">Categories</label>
+            <div class="admin-checks" id="pfCategories"></div>
+            <div class="admin-inline">
+              <div class="field">
+                <label for="pfNewCategory">Add a new category</label>
+                <input type="text" id="pfNewCategory" placeholder="e.g. New Category" />
+              </div>
+              <button type="button" class="btn btn--ghost btn--small" id="pfAddCategory">Add category</button>
+            </div>
 
-          <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.4rem;">Categories</label>
-          <div class="admin-checks" id="pfCategories"></div>
-          <div class="admin-inline">
             <div class="field">
-              <label for="pfNewCategory">Add a new category</label>
-              <input type="text" id="pfNewCategory" placeholder="e.g. New Category" />
+              <label for="pfDesc">Short description</label>
+              <textarea id="pfDesc" rows="3"></textarea>
             </div>
-            <button type="button" class="btn btn--ghost btn--small" id="pfAddCategory">Add category</button>
-          </div>
 
-          <div class="field">
-            <label for="pfDesc">Short description</label>
-            <textarea id="pfDesc" rows="3"></textarea>
-          </div>
-
-          <div class="admin-grid">
-            <div class="field">
-              <label for="pfImage">Image path</label>
-              <input type="text" id="pfImage" placeholder="images/brand/file.png" />
+            <div class="admin-grid">
+              <div class="field">
+                <label for="pfImage">Image path</label>
+                <input type="text" id="pfImage" placeholder="images/brand/file.png" />
+              </div>
+              <div class="field">
+                <label for="pfBrochure">Brochure path</label>
+                <input type="text" id="pfBrochure" placeholder="brochures/brand/file.pdf" />
+              </div>
             </div>
-            <div class="field">
-              <label for="pfBrochure">Brochure path</label>
-              <input type="text" id="pfBrochure" placeholder="brochures/brand/file.pdf" />
+
+            <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.4rem;">Specs</label>
+            <div id="pfSpecs"></div>
+            <button type="button" class="btn btn--ghost btn--small" id="pfAddSpec" style="margin-bottom:1.1rem;">+ Add spec</button>
+
+            <div class="admin-checks">
+              <label class="admin-check"><input type="checkbox" id="pfFeatured" /> Featured</label>
+              <label class="admin-check"><input type="checkbox" id="pfPublished" checked /> Published</label>
             </div>
-          </div>
 
-          <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.4rem;">Specs</label>
-          <div id="pfSpecs"></div>
-          <button type="button" class="btn btn--ghost btn--small" id="pfAddSpec" style="margin-bottom:1.1rem;">+ Add spec</button>
-
-          <div class="admin-checks">
-            <label class="admin-check"><input type="checkbox" id="pfFeatured" /> Featured</label>
-            <label class="admin-check"><input type="checkbox" id="pfPublished" checked /> Published</label>
-          </div>
-
-          <div class="row-actions">
-            <button type="submit" class="btn btn--primary">Save product</button>
-            <button type="button" class="btn btn--ghost admin-hidden" id="pfCancelEdit">Cancel edit</button>
-          </div>
-          <p class="form__status" id="productFormStatus" role="status" aria-live="polite"></p>
-        </form>
+            <div class="row-actions">
+              <button type="submit" class="btn btn--primary">Save product</button>
+              <button type="button" class="btn btn--ghost admin-hidden" id="pfCancelEdit">Cancel edit</button>
+            </div>
+            <p class="form__status" id="productFormStatus" role="status" aria-live="polite"></p>
+          </form>
+        </div>
       </div>
 
-      <div class="admin-panel">
-        <h2>All products (<span id="productCount">0</span>)</h2>
+      <div class="admin-panel" id="productsListPanel">
+        <h2>All products</h2>
+
+        <div class="admin-filters">
+          <input type="search" id="pSearch" class="toolbar__search" placeholder="Search name, code or brand…" aria-label="Search products" />
+          <div class="toolbar__group">
+            <label class="select-field">
+              <span>Brand</span>
+              <select id="pFilterBrand" aria-label="Filter by brand"><option value="all">All brands</option></select>
+            </label>
+            <label class="select-field">
+              <span>Category</span>
+              <select id="pFilterCategory" aria-label="Filter by category"><option value="all">All categories</option></select>
+            </label>
+            <label class="select-field">
+              <span>Status</span>
+              <select id="pFilterStatus" aria-label="Filter by status">
+                <option value="all">All</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </label>
+            <label class="select-field">
+              <span>Sort</span>
+              <select id="pSort" aria-label="Sort products">
+                <option value="date_desc">Newest first</option>
+                <option value="date_asc">Oldest first</option>
+                <option value="name_asc">Name (A–Z)</option>
+                <option value="name_desc">Name (Z–A)</option>
+                <option value="brand">Brand</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <p class="admin-results-count" id="productResultsCount"></p>
+
         <div style="overflow-x:auto;">
           <table class="admin-table">
             <thead>
-              <tr><th>Brand</th><th>Name</th><th>Categories</th><th>Status</th><th></th></tr>
+              <tr>
+                <th>Brand</th><th>Name</th><th>Categories</th>
+                <th>Date added</th><th>Status</th><th></th>
+              </tr>
             </thead>
             <tbody id="productsTableBody"></tbody>
           </table>
         </div>
+
+        <nav class="pagination" id="productsPagination" aria-label="Products pagination"></nav>
       </div>
     </section>
 

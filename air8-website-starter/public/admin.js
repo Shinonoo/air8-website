@@ -12,6 +12,10 @@ let brands = [];
 let categories = [];
 let editingProductId = null;
 
+let allProducts = [];
+let productsPage = 1;
+const PRODUCTS_PAGE_SIZE = 20;
+
 /* ---- API helper: JSON in, JSON out, throws on non-2xx ---- */
 async function api(path, options) {
   const res = await fetch(path, {
@@ -70,6 +74,24 @@ document.querySelectorAll(".admin-tab").forEach((tab) => {
   });
 });
 
+/* ---- Collapsible panels (Bulk import / Add-edit form default closed
+   so "All products" is visible without scrolling past them) ---- */
+function setupCollapse(toggleId, bodyId, onOpen) {
+  const toggle = document.getElementById(toggleId);
+  const body = document.getElementById(bodyId);
+  toggle.addEventListener("click", function () {
+    const willOpen = body.classList.contains("admin-hidden");
+    body.classList.toggle("admin-hidden", !willOpen);
+    toggle.setAttribute("aria-expanded", String(willOpen));
+    if (willOpen && typeof onOpen === "function") onOpen();
+  });
+}
+setupCollapse("bulkImportToggle", "bulkImportBody");
+setupCollapse("productFormToggle", "productFormBody", function () {
+  // Opened directly (not via "Edit") — make sure it's a blank "add" form.
+  if (!editingProductId) resetProductForm();
+});
+
 /* ---- Load everything the dashboard needs ---- */
 async function loadEverything() {
   await Promise.all([loadBrands(), loadCategories()]);
@@ -121,41 +143,150 @@ function addSpecRow(label, value) {
 }
 document.getElementById("pfAddSpec").addEventListener("click", () => addSpecRow());
 
-/* ---- Products table ---- */
+/* ---- Products table: search, filter, sort, paginate (all client-side —
+   the admin API already returns every product in one shot) ---- */
 async function loadProducts() {
-  const products = await api("/api/admin/products");
-  document.getElementById("productCount").textContent = products.length;
+  allProducts = await api("/api/admin/products");
+  populateProductFilterOptions();
+  productsPage = 1;
+  renderProductsTable();
+}
+
+// Filter dropdowns are built from the products that actually exist (not
+// every brand/category ever created), same pattern as the public catalog —
+// and preserve the current selection across a reload when it's still valid.
+function populateProductFilterOptions() {
+  const brandSelect = document.getElementById("pFilterBrand");
+  const prevBrand = brandSelect.value;
+  const brandNames = [...new Set(allProducts.map((p) => p.brand_name))].sort();
+  brandSelect.innerHTML =
+    '<option value="all">All brands</option>' + brandNames.map((b) => `<option>${b}</option>`).join("");
+  brandSelect.value = brandNames.includes(prevBrand) ? prevBrand : "all";
+
+  const categorySelect = document.getElementById("pFilterCategory");
+  const prevCategory = categorySelect.value;
+  const categoryNames = [...new Set(allProducts.flatMap((p) => (p.categories || []).map((c) => c.name)))].sort();
+  categorySelect.innerHTML =
+    '<option value="all">All categories</option>' + categoryNames.map((c) => `<option>${c}</option>`).join("");
+  categorySelect.value = categoryNames.includes(prevCategory) ? prevCategory : "all";
+}
+
+function renderProductsTable() {
+  const search = document.getElementById("pSearch").value.trim().toLowerCase();
+  const brandFilter = document.getElementById("pFilterBrand").value;
+  const categoryFilter = document.getElementById("pFilterCategory").value;
+  const statusFilter = document.getElementById("pFilterStatus").value;
+  const sort = document.getElementById("pSort").value;
+
+  const filtered = allProducts.filter((p) => {
+    const okBrand = brandFilter === "all" || p.brand_name === brandFilter;
+    const okCategory = categoryFilter === "all" || (p.categories || []).some((c) => c.name === categoryFilter);
+    const okStatus = statusFilter === "all" || (statusFilter === "published" ? !!p.is_published : !p.is_published);
+    const haystack = `${p.name} ${p.code || ""} ${p.brand_name}`.toLowerCase();
+    const okSearch = !search || haystack.includes(search);
+    return okBrand && okCategory && okStatus && okSearch;
+  });
+
+  filtered.sort((a, b) => {
+    if (sort === "date_asc") return new Date(a.created_at) - new Date(b.created_at);
+    if (sort === "name_asc") return a.name.localeCompare(b.name);
+    if (sort === "name_desc") return b.name.localeCompare(a.name);
+    if (sort === "brand") return a.brand_name.localeCompare(b.brand_name) || a.name.localeCompare(b.name);
+    return new Date(b.created_at) - new Date(a.created_at); // date_desc (default: newest first)
+  });
+
+  document.getElementById("productResultsCount").textContent =
+    filtered.length === allProducts.length
+      ? `${allProducts.length} product${allProducts.length === 1 ? "" : "s"}`
+      : `Showing ${filtered.length} of ${allProducts.length} products`;
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PRODUCTS_PAGE_SIZE));
+  if (productsPage > totalPages) productsPage = totalPages;
+  const start = (productsPage - 1) * PRODUCTS_PAGE_SIZE;
+  const pageItems = filtered.slice(start, start + PRODUCTS_PAGE_SIZE);
+
   const body = document.getElementById("productsTableBody");
-  body.innerHTML = products
-    .map((p) => {
-      const cats = (p.categories || []).map((c) => `<span class="pill">${c.name}</span>`).join("");
-      const status = p.is_published
-        ? '<span class="pill pill--ok">Published</span>'
-        : '<span class="pill pill--warn">Draft</span>';
-      return `
-        <tr>
-          <td>${p.brand_name}</td>
-          <td>${p.name}${p.code ? `<br><span style="color:var(--steel);font-size:0.8rem;">${p.code}</span>` : ""}</td>
-          <td>${cats}</td>
-          <td>${status}</td>
-          <td>
-            <div class="row-actions">
-              <button class="btn btn--ghost btn--small" data-edit="${p.id}">Edit</button>
-              <button class="btn btn--danger btn--small" data-delete="${p.id}">Delete</button>
-            </div>
-          </td>
-        </tr>
-      `;
-    })
-    .join("");
+  if (pageItems.length === 0) {
+    body.innerHTML =
+      '<tr><td colspan="6" style="text-align:center; color:var(--steel); padding:1.5rem;">No products match.</td></tr>';
+  } else {
+    body.innerHTML = pageItems
+      .map((p) => {
+        const cats = (p.categories || []).map((c) => `<span class="pill">${c.name}</span>`).join("");
+        const status = p.is_published
+          ? '<span class="pill pill--ok">Published</span>'
+          : '<span class="pill pill--warn">Draft</span>';
+        const dateAdded = p.created_at
+          ? new Date(p.created_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+          : "—";
+        return `
+          <tr>
+            <td>${p.brand_name}</td>
+            <td>${p.name}${p.code ? `<br><span style="color:var(--steel);font-size:0.8rem;">${p.code}</span>` : ""}</td>
+            <td>${cats}</td>
+            <td style="white-space:nowrap;">${dateAdded}</td>
+            <td>${status}</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn--ghost btn--small" data-edit="${p.id}">Edit</button>
+                <button class="btn btn--danger btn--small" data-delete="${p.id}">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      })
+      .join("");
+  }
 
   body.querySelectorAll("[data-edit]").forEach((btn) => {
-    btn.addEventListener("click", () => editProduct(products.find((p) => p.id === Number(btn.dataset.edit))));
+    btn.addEventListener("click", () => editProduct(allProducts.find((p) => p.id === Number(btn.dataset.edit))));
   });
   body.querySelectorAll("[data-delete]").forEach((btn) => {
     btn.addEventListener("click", () => deleteProduct(Number(btn.dataset.delete)));
   });
+
+  renderProductsPagination(totalPages);
 }
+
+function renderProductsPagination(totalPages) {
+  const nav = document.getElementById("productsPagination");
+  if (totalPages <= 1) {
+    nav.innerHTML = "";
+    return;
+  }
+  let html = `<button class="pagination__btn" data-page="${productsPage - 1}" ${productsPage === 1 ? "disabled" : ""} aria-label="Previous page">&larr;</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="pagination__btn${i === productsPage ? " is-active" : ""}" data-page="${i}" ${i === productsPage ? 'aria-current="page"' : ""}>${i}</button>`;
+  }
+  html += `<button class="pagination__btn" data-page="${productsPage + 1}" ${productsPage === totalPages ? "disabled" : ""} aria-label="Next page">&rarr;</button>`;
+  nav.innerHTML = html;
+
+  nav.querySelectorAll("button[data-page]").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const page = Number(btn.dataset.page);
+      if (!page || page === productsPage || btn.disabled) return;
+      productsPage = page;
+      renderProductsTable();
+      document.getElementById("productsListPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+function resetProductsToPageOne() {
+  productsPage = 1;
+  renderProductsTable();
+}
+
+document.getElementById("pFilterBrand").addEventListener("change", resetProductsToPageOne);
+document.getElementById("pFilterCategory").addEventListener("change", resetProductsToPageOne);
+document.getElementById("pFilterStatus").addEventListener("change", resetProductsToPageOne);
+document.getElementById("pSort").addEventListener("change", resetProductsToPageOne);
+
+let searchDebounceTimer;
+document.getElementById("pSearch").addEventListener("input", function () {
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(resetProductsToPageOne, 200);
+});
 
 function editProduct(p) {
   editingProductId = p.id;
@@ -179,6 +310,9 @@ function editProduct(p) {
   (p.specs || []).forEach((s) => addSpecRow(s.label, s.value));
 
   document.getElementById("pfCancelEdit").classList.remove("admin-hidden");
+
+  document.getElementById("productFormBody").classList.remove("admin-hidden");
+  document.getElementById("productFormToggle").setAttribute("aria-expanded", "true");
   document.getElementById("productForm").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -243,7 +377,10 @@ document.getElementById("productForm").addEventListener("submit", async function
     statusEl.textContent = "Saved.";
     statusEl.className = "form__status is-ok";
     resetProductForm();
+    document.getElementById("productFormBody").classList.add("admin-hidden");
+    document.getElementById("productFormToggle").setAttribute("aria-expanded", "false");
     await loadProducts();
+    document.getElementById("productsListPanel").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
     statusEl.textContent = err.message;
     statusEl.className = "form__status is-error";
@@ -289,6 +426,9 @@ document.getElementById("bulkImportBtn").addEventListener("click", async functio
     document.getElementById("bulkFile").value = "";
     await Promise.all([loadBrands(), loadCategories()]);
     await loadProducts();
+    document.getElementById("pSort").value = "date_desc"; // surface the just-imported rows
+    resetProductsToPageOne();
+    document.getElementById("productsListPanel").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
     statusEl.textContent = err.message;
     statusEl.className = "form__status is-error";
