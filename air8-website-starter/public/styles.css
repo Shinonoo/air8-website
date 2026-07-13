@@ -185,6 +185,30 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .nav__cta:hover { filter: brightness(0.95); }
 
+/* "Products" hover dropdown — jump straight to a brand's filtered catalog. */
+.nav__item { position: relative; }
+.nav__item > a::after {
+  content: "▾"; display: inline-block; margin-left: 0.3em;
+  font-size: 0.7em; color: var(--steel);
+}
+.nav__dropdown {
+  display: none;
+  flex-direction: column;
+  position: absolute; top: 100%; left: 0; margin-top: 0.4rem;
+  min-width: 170px; padding: 0.4rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(15, 27, 45, 0.14);
+  z-index: 20;
+}
+.nav__item:hover .nav__dropdown,
+.nav__item:focus-within .nav__dropdown {
+  display: flex;
+}
+.nav__dropdown a {
+  padding: 0.55rem 0.7rem; border-radius: 7px; white-space: nowrap;
+}
+.nav__dropdown a:hover { background: var(--bg); color: var(--navy); }
+
 /* Hamburger button — hidden on desktop, shown on mobile (or a narrow
    desktop window, which is still mouse-driven, so it needs a hover cue
    like every other interactive control on the site). */
@@ -235,9 +259,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 .partners__inner {
-  padding: 2rem 1.5rem; 
-  display: flex; align-items: center; 
-  gap: 2.5rem; 
+  padding: 2rem 1.5rem;
+  display: flex; align-items: center;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
@@ -246,16 +270,23 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   font-size: 0.72rem; letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--steel);
+  flex: 0 0 auto;
 }
 
 /* This was the missing piece: without it, .partner (a column flex item)
    falls back to block display here and the two partners stack one on
-   top of the other instead of sitting in a single row/strip. */
+   top of the other instead of sitting in a single row/strip.
+   flex-wrap stays "nowrap" so Elta Fans / Abie Tiger / Starduct always
+   sit in ONE row — the responsive rules below shrink them to fit
+   instead of letting them wrap to a second line. */
 .partners__logos {
   display: flex;
   align-items: center;
-  gap: 2.5rem;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: nowrap;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .partner__logo {
@@ -274,6 +305,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   flex-direction: row;
   align-items: center;
   gap: 1.1rem;
+  min-width: 0; /* lets flex actually shrink this item instead of forcing the row to wrap */
 }
 
 .partner__name { 
@@ -357,6 +389,16 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .cards--triple { grid-template-columns: 1fr; }
   .values { grid-template-columns: 1fr; }
 
+  /* Shrink the distributor strip so Elta Fans / Abie Tiger / Starduct
+     still fit in one row on narrow screens instead of wrapping. */
+  .partners__inner { gap: 1rem; }
+  .partners__label { display: none; } /* redundant once the section is this tight */
+  .partners__logos { gap: 0.75rem; }
+  .partner { gap: 0.5rem; }
+  .partner__logo { max-width: 64px; max-height: 48px; }
+  .partner__name { font-size: 0.85rem; }
+  .partner__origin { display: none; } /* keep the row to brand name + logo only */
+
   /* Show hamburger, hide the desktop menu until toggled open */
   .nav-toggle { display: flex; }
   .nav {
@@ -368,6 +410,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   }
   .nav.is-open { display: flex; } /* JS adds .is-open when tapped */
   .nav a { padding: 0.75rem 0; width: 100%; }
+  .nav__item { width: 100%; }
+
+  /* No hover on touch — show the brand links inline under "Products"
+     instead of hiding them behind a hover state that can't be reached. */
+  .nav__dropdown {
+    display: flex; position: static; margin-top: 0;
+    border: none; box-shadow: none; padding: 0 0 0.4rem 1rem;
+  }
+  .nav__dropdown a { padding: 0.5rem 0; color: var(--steel); }
   /* .nav a's padding above wins over .nav__cta's own padding (same
      specificity, .nav a declared later) unless we out-specify it here —
      that was stripping the pill's side padding and letting the label
@@ -376,6 +427,22 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     width: 100%; text-align: center;
     padding: 0.85rem 1.1rem; margin-top: 0.6rem;
   }
+}
+
+/* Phone widths: even "logo + name" per brand is too wide for 3 in a row —
+   stack each brand's logo above its name instead so the row stays put. */
+@media (max-width: 480px) {
+  .partners__inner { padding: 1.1rem 1rem; }
+  .partners__logos { gap: 0.5rem; }
+  .partner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.3rem;
+    flex: 1 1 0;
+  }
+  .partner__logo { max-width: 34px; max-height: 30px; }
+  .partner__name { font-size: 0.68rem; letter-spacing: 0.01em; }
 }
 
 /* Respect users who prefer no motion (accessibility) */

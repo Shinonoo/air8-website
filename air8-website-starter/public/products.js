@@ -309,6 +309,14 @@ async function init() {
 
   const brands = [...new Set(PRODUCTS.map((p) => p.brand))].sort();
   fillSelect(brandFilter, brands, "All brands");
+
+  // Coming from the "Products" nav dropdown (e.g. products.html?brand=Elta+Fans)
+  // pre-selects that brand so visitors land straight on it.
+  const requestedBrand = new URLSearchParams(location.search).get("brand");
+  if (requestedBrand && brands.includes(requestedBrand)) {
+    brandFilter.value = requestedBrand;
+  }
+
   refreshCategoryOptions();
   render();
 }
