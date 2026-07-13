@@ -23,8 +23,8 @@ const CONTENT = [
   // ---- Hero ----
   ["home.hero.eyebrow", "Hero", "Eyebrow (small label above headline)", "Ventilation · Acoustics · Ductwork"],
   ["home.hero.title", "Hero", "Headline (put each line on its own line)", "We move air.\nWe control sound."],
-  ["home.hero.lead", "Hero", "Intro paragraph", "Air 8 Industries supplies and services fans, blowers, acoustic systems and ductwork for homes, buildings and industry across the Philippines — with engineering support from enquiry to installation."],
-  ["home.hero.cta_primary", "Hero", "Primary button", "Get a free quote"],
+  ["home.hero.lead", "Hero", "Intro paragraph", "Air 8 Industries supplies fans, blowers, acoustic systems and ductwork for homes, buildings and industry across the Philippines — with technical support from enquiry to delivery."],
+  ["home.hero.cta_primary", "Hero", "Primary button", "Get a quote"],
   ["home.hero.cta_secondary", "Hero", "Secondary button", "Browse products"],
 
   // ---- Partners strip ----
@@ -40,30 +40,17 @@ const CONTENT = [
 
   // ---- Services ----
   ["home.services.eyebrow", "Services", "Eyebrow", "Services"],
-  ["home.services.title", "Services", "Heading", "Supply, install, maintain — one team."],
-  ["home.services.lead", "Services", "Intro paragraph", "From a single exhaust fan to a full building package, we handle the equipment and the work around it."],
-  ["home.services.card1_title", "Services", "Card 1 — title", "Equipment supply & installation"],
-  ["home.services.card1_body", "Services", "Card 1 — text", "The right fan, silencer or duct system for your space — supplied from three international brands and installed to specification."],
-  ["home.services.card1_cta", "Services", "Card 1 — link text", "Request installation"],
-  ["home.services.card2_title", "Services", "Card 2 — title", "Repair & maintenance"],
-  ["home.services.card2_body", "Services", "Card 2 — text", "Keep ventilation and noise control performing: inspection, parts replacement and preventive maintenance programs for buildings and plants."],
-  ["home.services.card2_cta", "Services", "Card 2 — link text", "Book maintenance"],
-  ["home.services.card3_title", "Services", "Card 3 — title", "Quotation & equipment selection"],
-  ["home.services.card3_body", "Services", "Card 3 — text", "Not sure what you need? Send your requirements or plans and our engineers will size and quote the right equipment — free of charge."],
-  ["home.services.card3_cta", "Services", "Card 3 — link text", "Get a free quote"],
-
-  // ---- Who we serve ----
-  ["home.audience.eyebrow", "Who we serve", "Eyebrow", "Who we serve"],
-  ["home.audience.title", "Who we serve", "Heading", "Tell us who you are — we'll point you the right way."],
-  ["home.audience.card1_title", "Who we serve", "Card 1 — title", "Homeowners"],
-  ["home.audience.card1_body", "Who we serve", "Card 1 — text", "Quiet, efficient ventilation for kitchens, bathrooms and living spaces — with help choosing the right size."],
-  ["home.audience.card1_cta", "Who we serve", "Card 1 — link text", "Browse residential fans"],
-  ["home.audience.card2_title", "Who we serve", "Card 2 — title", "Property managers"],
-  ["home.audience.card2_body", "Who we serve", "Card 2 — text", "Replacements and maintenance programs for buildings, car parks and common areas — keep tenants comfortable and compliant."],
-  ["home.audience.card2_cta", "Who we serve", "Card 2 — link text", "Book maintenance"],
-  ["home.audience.card3_title", "Who we serve", "Card 3 — title", "Commercial & industrial"],
-  ["home.audience.card3_body", "Who we serve", "Card 3 — text", "Engineered airflow, smoke management and acoustic packages for projects of any scale, specified with our brand partners."],
-  ["home.audience.card3_cta", "Who we serve", "Card 3 — link text", "Discuss your project"],
+  ["home.services.title", "Services", "Heading", "The right equipment, straight from the source."],
+  ["home.services.lead", "Services", "Intro paragraph", "From a single exhaust fan to a full building package — we supply it, spec it and stand behind it."],
+  ["home.services.card1_title", "Services", "Card 1 — title", "Equipment supply"],
+  ["home.services.card1_body", "Services", "Card 1 — text", "Fans, blowers, acoustic systems and ductwork from three international brands — delivered anywhere in the Philippines."],
+  ["home.services.card1_cta", "Services", "Card 1 — link text", "Request a quote"],
+  ["home.services.card2_title", "Services", "Card 2 — title", "Quotation & equipment selection"],
+  ["home.services.card2_body", "Services", "Card 2 — text", "Not sure what you need? Send your requirements or plans and our team will size and quote the right equipment for the job."],
+  ["home.services.card2_cta", "Services", "Card 2 — link text", "Get a quote"],
+  ["home.services.card3_title", "Services", "Card 3 — title", "Brochures & technical data"],
+  ["home.services.card3_body", "Services", "Card 3 — text", "Full specifications and downloadable brochures for every product in our catalog — everything your engineer or contractor needs."],
+  ["home.services.card3_cta", "Services", "Card 3 — link text", "Browse the catalog"],
 
   // ---- About ----
   ["home.about.eyebrow", "About", "Eyebrow", "About us"],
@@ -100,13 +87,13 @@ const CONTENT = [
 
   // ---- How it works ----
   ["home.process.eyebrow", "How it works", "Eyebrow", "How it works"],
-  ["home.process.title", "How it works", "Heading", "From enquiry to installed equipment in three steps."],
+  ["home.process.title", "How it works", "Heading", "From enquiry to delivered equipment in three steps."],
   ["home.process.step1_title", "How it works", "Step 1 — title", "Tell us what you need"],
   ["home.process.step1_body", "How it works", "Step 1 — text", "Send the quote form, call, or email — a product name, a problem to solve, or full project plans all work."],
   ["home.process.step2_title", "How it works", "Step 2 — title", "We size & quote"],
   ["home.process.step2_body", "How it works", "Step 2 — text", "Our team reviews your requirement, selects the right equipment from our brands, and sends you a formal quotation."],
-  ["home.process.step3_title", "How it works", "Step 3 — title", "Delivery & aftercare"],
-  ["home.process.step3_body", "How it works", "Step 3 — text", "We deliver, support installation, and stay available for maintenance and parts long after handover."],
+  ["home.process.step3_title", "How it works", "Step 3 — title", "Delivery & support"],
+  ["home.process.step3_body", "How it works", "Step 3 — text", "We deliver nationwide and stay available for technical questions, documentation and follow-up orders."],
   ["home.process.cta", "How it works", "Button", "Start your quote"],
 
   // ---- FAQ ----
@@ -116,8 +103,8 @@ const CONTENT = [
   ["home.faq.a1", "FAQ", "Answer 1", "Both. We supply single residential fans just as happily as full commercial packages — and we'll help you pick the right size either way."],
   ["home.faq.q2", "FAQ", "Question 2", "How do I get a quotation?"],
   ["home.faq.a2", "FAQ", "Answer 2", "Send the form below with what you need (a product name, a problem, or project plans). Our team reviews it and replies with a formal quotation."],
-  ["home.faq.q3", "FAQ", "Question 3", "Do you install the equipment you supply?"],
-  ["home.faq.a3", "FAQ", "Answer 3", "Yes — choose supply-and-install or supply-only. We also service and maintain equipment we've delivered."],
+  ["home.faq.q3", "FAQ", "Question 3", "Do you handle installation?"],
+  ["home.faq.a3", "FAQ", "Answer 3", "We're a dedicated supplier — installation is handled by your contractor. We support them with complete specifications, brochures and technical documentation."],
   ["home.faq.q4", "FAQ", "Question 4", "Which areas do you serve?"],
   ["home.faq.a4", "FAQ", "Answer 4", "We're based in Parañaque, Metro Manila, and deliver and support projects nationwide."],
   ["home.faq.q5", "FAQ", "Question 5", "Which brands do you carry?"],
@@ -125,7 +112,7 @@ const CONTENT = [
 
   // ---- Contact ----
   ["home.contact.eyebrow", "Contact", "Eyebrow", "Get a quote"],
-  ["home.contact.title", "Contact", "Heading", "Request a free quotation."],
+  ["home.contact.title", "Contact", "Heading", "Request a quotation."],
   ["home.contact.intro", "Contact", "Intro paragraph", "Tell us what you need — our team reviews every enquiry and gets back to you with pricing, availability and honest advice."],
   ["home.contact.address", "Contact", "Address", "8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila"],
   ["home.contact.phone", "Contact", "Phone", "(028) 828-2496 · (028) 782-6117"],
@@ -159,7 +146,14 @@ async function main() {
     );
     n++;
   }
-  console.log(`Seeded ${n} content blocks into site_content.`);
+  // Remove blocks that no longer exist on the site (e.g. a section that was
+  // cut) so the admin "Page text" tab doesn't show orphaned editors.
+  const validKeys = CONTENT.map(([key]) => key);
+  const [gone] = await pool.query(
+    "DELETE FROM site_content WHERE content_key NOT IN (?)",
+    [validKeys]
+  );
+  console.log(`Seeded ${n} content blocks into site_content (${gone.affectedRows} orphaned block(s) removed).`);
   await pool.end();
 }
 

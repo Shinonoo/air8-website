@@ -37,20 +37,20 @@ app.use(compression());
 app.use(express.json());                        // lets us read JSON bodies (the form data)
 
 // Static files with sane browser caching so repeat visits don't re-download
-// 20MB of product images:
+// megabytes of product images:
 //  - images/brochures rarely change -> cache 7 days
-//  - css/js change with deploys      -> cache 1 hour (etag revalidates anyway)
-//  - html                            -> always revalidate (so edits show up)
+//  - css/js/html                    -> no-cache: the browser keeps a copy but
+//    revalidates every load (cheap 304s via ETag). A timed cache here once let
+//    visitors see brand-new HTML styled by an hour-old stylesheet — sections
+//    looked broken until the cache expired. Never again.
 app.use(express.static(path.join(__dirname, "public"), {
   etag: true,
   lastModified: true,
   setHeaders(res, filePath) {
     if (/\.(png|jpe?g|webp|gif|svg|ico|pdf|woff2?)$/i.test(filePath)) {
       res.setHeader("Cache-Control", "public, max-age=604800"); // 7 days
-    } else if (/\.(css|js)$/i.test(filePath)) {
-      res.setHeader("Cache-Control", "public, max-age=3600");   // 1 hour
     } else {
-      res.setHeader("Cache-Control", "no-cache");               // html: revalidate
+      res.setHeader("Cache-Control", "no-cache");               // revalidate (ETag)
     }
   },
 }));

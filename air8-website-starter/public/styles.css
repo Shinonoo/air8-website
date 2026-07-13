@@ -422,24 +422,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 /* Section intro line under a title (services etc.) */
 .section__lead { color: var(--steel); max-width: 60ch; margin-top: 0.9rem; }
 
-/* SERVICE CARDS — a card with one clear action at the bottom */
+/* SERVICE CARDS — a card with one clear action at the bottom.
+   margin-top:auto pins every CTA to the card's baseline, so the three
+   links sit level even when the bodies are different lengths. */
 .card--service { display: flex; flex-direction: column; }
-.card--service .card__body { flex: 1; margin-bottom: 1.4rem; }
-.card__cta { font-weight: 600; color: var(--navy); }
+.card--service .card__body { margin-bottom: 1.4rem; }
+.card__cta { margin-top: auto; font-weight: 600; color: var(--navy); }
 .card__cta::after { content: " →"; }
 .card__cta:hover { color: var(--amber); }
-
-/* AUDIENCE CARDS — guided paths per visitor type */
-.audience-card {
-  background: var(--surface); border: 1px solid var(--line);
-  border-radius: var(--radius); padding: 2rem;
-  display: flex; flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.audience-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(15, 27, 45, 0.08); }
-.audience-card__title { font-size: 1.25rem; color: var(--navy); margin-bottom: 0.6rem; }
-.audience-card__body { color: var(--steel); flex: 1; margin-bottom: 1.5rem; }
-.btn--block { display: block; text-align: center; }
 
 /* PROCESS — the 3-step "how it works" ladder */
 .process {
