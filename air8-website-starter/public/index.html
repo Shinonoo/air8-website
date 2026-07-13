@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<!--
+  Air 8 Industries Inc. - Homepage
+  ---------------------------------
+  This is one single page split into "sections" (hero, about, products, contact...).
+  The navigation links jump between sections using #ids (e.g. href="#products").
+  Read it top to bottom like a document: <header> first, then each <section>, then <footer>.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- This meta tag makes the site scale correctly on phones. Never remove it. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Air 8 Industries Inc. — Ventilation &amp; Acoustic Solutions</title>
+  <meta name="description" content="Air 8 Industries Inc. supplies high-quality ventilation and acoustic solutions in the Philippines. Authorized distributor of Elta Fans (Malaysia) and Abie Tiger (Thailand)." />
+  <link rel="icon" href="images/air8_logo.png" type="image/png" />
+
+  <!-- Google Fonts: the 3 typefaces the design uses. Loaded from Google's servers. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Our own styles. This is where all the colors/spacing/layout live. -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+       HEADER / NAVIGATION
+       Stays at the top. On mobile the links collapse behind a button.
+       ============================================================ -->
+  <header class="site-header" id="top">
+    <div class="container header__inner">
+      <a class="brand" href="#top" aria-label="Air 8 Industries home">
+        <img class="brand__logo" src="images/air8_logo.png" alt="Air 8 Industries Inc."
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
+        <span class="brand__wordmark">
+          <!-- <span class="brand__mark">AIR8</span> -->
+          <span class="brand__name">Industries Inc.</span>
+        </span>
+      </a>
+
+      <!-- The button only shows on small screens (see CSS). It toggles the menu. -->
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="sr-only">Menu</span>
+      </button>
+
+      <nav class="nav" id="navMenu" aria-label="Main">
+        <a href="#about">About</a>
+        <a href="#capabilities">What we do</a>
+        <a href="products.html">Products</a>
+        <a href="#values">Why Air 8</a>
+        <a class="nav__cta" href="#contact">Get a quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============================================================
+         HERO — the first thing visitors see. Big statement + airflow motif.
+        ============================================================ -->
+    <section class="hero" id="a8Hero">
+      <!-- Animated backdrop: drifting particles, a spinning fan-blade motif and a
+           "sound attenuation" bar meter. Purely decorative — see hero-animation.js. -->
+      <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
+
+      <div class="container hero__inner">
+        <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span>Ventilation &amp; Acoustic Solutions</p>
+        <!-- hero-animation.js rebuilds this into per-letter spans for the reveal
+             animation; the plain text below is what shows if JS doesn't run. -->
+        <h1 class="hero__title" id="heroTitle">We move air.<br />We control sound.</h1>
+        <p class="hero__lead">
+          Air 8 Industries Inc. supplies reliable, energy-efficient fans, blowers and
+          acoustic systems for industrial, commercial and residential spaces across the Philippines.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#products">Explore products</a>
+          <a class="btn btn--ghost" href="#contact">Talk to us</a>
+        </div>
+        <div class="hero__tags">
+          <span>Industrial Fans</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span>Blowers</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span>Sound Attenuators</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PARTNERS STRIP — builds trust: who we represent.
+         ============================================================ -->
+    <section class="partners" aria-label="Our brand partners">
+      <div class="container partners__inner">
+        <p class="partners__label">Authorized distributor of</p>
+        <div class="partners__logos">
+          <div class="partner">
+            <span class="partner__name">ELTA&nbsp;FANS</span>
+            <span class="partner__origin">Malaysia · Fans &amp; Blowers</span>
+            <img class="partner__logo" src="images/elta_fans/elta_logo.jpg" alt="Elta Fans logo" />
+          </div>
+          <div class="partner">
+            <span class="partner__name">ABIE&nbsp;TIGER</span>
+            <span class="partner__origin">Thailand · Acoustic Solutions</span>
+            <img class="partner__logo" src="images/abie_tiger/abie_tiger_logo.webp" alt="Abie Tiger logo" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         ABOUT
+         ============================================================ -->
+    <section class="section" id="about">
+      <div class="container grid-2">
+        <div class="reveal">
+          <p class="eyebrow">About us</p>
+          <h2 class="section__title">A dependable partner for air and sound.</h2>
+        </div>
+        <div class="reveal">
+          <p class="prose">
+            We specialize in two connected worlds: air movement through our partnership with
+            <strong>Elta Fans</strong>, and noise &amp; vibration control through
+            <strong>Abie Tiger</strong>. Our mission is simple — deliver high-quality products
+            that meet the exact needs of each client, backed by real technical support.
+          </p>
+          <p class="prose">
+            From a single exhaust fan to a full building enclosure, we help you get the right
+            solution the first time.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CAPABILITIES — the two core domains, shown as two panels.
+         ============================================================ -->
+    <section class="section section--tint" id="capabilities">
+      <div class="container">
+        <p class="eyebrow eyebrow--center">What we do</p>
+        <h2 class="section__title section__title--center">Two problems. One supplier.</h2>
+
+        <div class="cards cards--2">
+          <article class="card reveal">
+            <p class="card__index">AIR</p>
+            <h3 class="card__title">Air movement &amp; ventilation</h3>
+            <p class="card__body">
+              Axial, centrifugal, roof, in-line and hazardous-area fans — plus blowers,
+              controls and accessories for optimal airflow in any environment.
+            </p>
+          </article>
+
+          <article class="card reveal">
+            <p class="card__index">SOUND</p>
+            <h3 class="card__title">Noise &amp; vibration control</h3>
+            <p class="card__body">
+              Silencers, acoustic louvers, sound-lock doors, barriers, enclosures and a full
+              range of vibration isolators for noise-sensitive locations.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PRODUCTS — overview cards linking (later) to detail pages.
+         ============================================================ -->
+    <section class="section" id="products">
+      <div class="container">
+        <p class="eyebrow">Products</p>
+        <h2 class="section__title">What we supply</h2>
+
+        <div class="cards cards--3">
+          <article class="product reveal">
+            <span class="product__brand">Elta Fans</span>
+            <h3 class="product__title">Commercial &amp; industrial fans</h3>
+            <p class="product__body">Plate, roof, in-line, car park, centrifugal, high-temperature and hazardous-area fans.</p>
+          </article>
+
+          <article class="product reveal">
+            <span class="product__brand">Elta Fans</span>
+            <h3 class="product__title">Residential &amp; bespoke</h3>
+            <p class="product__body">Wall, window and in-line units, heat recovery, plus custom cased axial and ATEX solutions.</p>
+          </article>
+
+          <article class="product reveal">
+            <span class="product__brand">Abie Tiger</span>
+            <h3 class="product__title">Sound attenuators &amp; barriers</h3>
+            <p class="product__body">Duct silencers, acoustic louvers, sound-lock doors, noise barriers and full enclosures.</p>
+          </article>
+
+          <article class="product reveal">
+            <span class="product__brand">Abie Tiger</span>
+            <h3 class="product__title">Vibration isolators</h3>
+            <p class="product__body">Spring mounts, hangers, rubber pads and floating-floor systems for sensitive equipment.</p>
+          </article>
+        </div>
+
+        <div class="products__more">
+          <a class="btn btn--primary" href="products.html">View full catalog &amp; brochures</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         VALUES — condensed from the company profile.
+         ============================================================ -->
+    <section class="section section--dark" id="values">
+      <div class="container">
+        <p class="eyebrow eyebrow--light">Why Air 8</p>
+        <h2 class="section__title section__title--light">Built on how we work.</h2>
+        <ul class="values">
+          <li class="reveal"><span>Quality</span>Durability, performance and efficiency in every product.</li>
+          <li class="reveal"><span>Commitment</span>Dependable solutions delivered on time.</li>
+          <li class="reveal"><span>Honesty</span>Transparency and integrity in every dealing.</li>
+          <li class="reveal"><span>Dedication</span>Going beyond to meet each client's needs.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CONTACT — the only interactive part. The form talks to our backend.
+         ============================================================ -->
+    <section class="section" id="contact">
+      <div class="container grid-2 grid-2--contact">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2 class="section__title">Tell us what you need.</h2>
+          <p class="prose">
+            For details about services, pricing or availability, send us a message and our
+            team will get back to you.
+          </p>
+
+          <ul class="contact-details">
+            <li><span>Address</span>8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila</li>
+            <li><span>Email</span><a href="mailto:sales@air8industries.com">sales@air8industries.com</a></li>
+            <li><span>Phone</span>(028) 828-2496 · (028) 782-6117</li>
+          </ul>
+        </div>
+
+        <!--
+          IMPORTANT: no <form action="..."> reload here.
+          Our JavaScript intercepts the submit and sends the data to the backend
+          using fetch(), then shows a message. See main.js.
+        -->
+        <form class="form" id="contactForm" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required autocomplete="name" />
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required autocomplete="email" />
+          </div>
+
+          <div class="field">
+            <label for="company">Company <span class="field__optional">(optional)</span></label>
+            <input type="text" id="company" name="company" autocomplete="organization" />
+          </div>
+
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary" id="submitBtn">Send message</button>
+
+          <!-- This empty box gets filled by JS with a success or error message. -->
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <span class="brand__mark brand__mark--footer">AIR8</span>
+        <p class="footer__tag">Ventilation &amp; acoustic solutions.</p>
+      </div>
+      <div class="footer__meta">
+        <a href="mailto:sales@air8industries.com">sales@air8industries.com</a>
+        <span>© <span id="year"></span> Air 8 Industries Inc.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Our JavaScript. Loaded last so the HTML above already exists when it runs. -->
+  <!-- nav.js (shared) must load before main.js -->
+  <script src="nav.js"></script>
+  <script src="main.js"></script>
+
+  <!-- GSAP powers the hero's letter-reveal animation. hero-animation.js works
+       fine without it (falls back to a plain fade), so a slow/blocked CDN
+       never breaks the page — it just loses the fancier reveal. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="hero-animation.js"></script>
+</body>
+</html>

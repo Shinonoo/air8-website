@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!--
+  Products catalog page.
+  Notice how SHORT this file is even though it can show hundreds of
+  products: the products live in products-data.js, and products.js
+  draws them. This page is just the frame.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products — Air 8 Industries Inc.</title>
+  <meta name="description" content="Browse fans, blowers and acoustic products from Elta Fans and Abie Tiger, with downloadable brochures." />
+  <link rel="icon" href="images/air8_logo.png" type="image/png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- Same header as the homepage, but links point back to index.html sections -->
+  <header class="site-header" id="top">
+    <div class="container header__inner">
+      <a class="brand" href="index.html" aria-label="Air 8 Industries home">
+        <img class="brand__logo" src="images/air8_logo.png" alt="Air 8 Industries Inc."
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
+        <span class="brand__wordmark">
+          <span class="brand__mark">AIR8</span>
+          <span class="brand__name">Industries Inc.</span>
+        </span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="sr-only">Menu</span>
+      </button>
+      <nav class="nav" id="navMenu" aria-label="Main">
+        <a href="index.html#about">About</a>
+        <a href="index.html#capabilities">What we do</a>
+        <a href="products.html">Products</a>
+        <a href="index.html#values">Why Air 8</a>
+        <a class="nav__cta" href="index.html#contact">Get a quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Page intro -->
+    <section class="catalog-hero">
+      <div class="container container--wide">
+        <p class="eyebrow">Products</p>
+        <h1 class="catalog-hero__title">Fans, blowers &amp; acoustic systems</h1>
+        <p class="catalog-hero__lead">
+          Everything we supply from Elta Fans and Abie Tiger. Filter by type or search,
+          then download the brochure for full specifications.
+        </p>
+      </div>
+    </section>
+
+    <!-- Controls: search + brand + category + sort (compact toolbar) -->
+    <section class="catalog-controls">
+      <div class="container container--wide catalog-toolbar">
+        <input type="search" id="productSearch" class="toolbar__search" placeholder="Search products…" aria-label="Search products" />
+        <div class="toolbar__group">
+          <label class="select-field">
+            <span>Brand</span>
+            <select id="brandFilter" aria-label="Filter by brand"></select>
+          </label>
+          <label class="select-field">
+            <span>Category</span>
+            <select id="categoryFilter" aria-label="Filter by category"></select>
+          </label>
+          <label class="select-field">
+            <span>Sort</span>
+            <select id="sortBy" aria-label="Sort products">
+              <option value="featured">Featured</option>
+              <option value="az">Name (A–Z)</option>
+              <option value="za">Name (Z–A)</option>
+              <option value="brand">Brand</option>
+            </select>
+          </label>
+          <span class="catalog-count" id="resultCount"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- The grid the engine fills in -->
+    <section class="section catalog-section" style="padding-top:2rem">
+      <!-- Decorative drift lines in the empty margins either side of the
+           grid on wide screens — purely visual, hidden from screen readers. -->
+      <div class="catalog-ambient" aria-hidden="true"><span></span><span></span></div>
+      <div class="container container--wide">
+        <div class="catalog-grid" id="productGrid"></div>
+        <nav class="pagination" id="pagination" aria-label="Products pagination"></nav>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       PRODUCT POPUP (modal). Hidden until a card is clicked.
+       Layout: image on the LEFT, details on the RIGHT,
+       actions (Download / Inquire) at the lower right.
+       ============================================================ -->
+  <div class="modal" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalName" hidden>
+    <!-- The dark background. Clicking it closes the popup (data-close). -->
+    <div class="modal__backdrop" data-close></div>
+
+    <div class="modal__panel">
+      <button class="modal__close" id="modalClose" aria-label="Close">&times;</button>
+
+      <!-- LEFT: product image (or fallback tile) -->
+      <div class="modal__media media" id="modalMedia"></div>
+
+      <!-- RIGHT: details -->
+      <div class="modal__body">
+        <div class="modal__top">
+          <span class="modal__brand" id="modalBrand"></span>
+          <span class="modal__code" id="modalCode"></span>
+        </div>
+        <h2 class="modal__name" id="modalName"></h2>
+        <p class="modal__desc" id="modalDesc"></p>
+
+        <!-- Optional highlight boxes, filled by JS when a product has specs -->
+        <div class="modal__specs" id="modalSpecs" hidden></div>
+
+        <!-- Default action buttons (lower right) -->
+        <div class="modal__actions" id="modalActions">
+          <a class="btn btn--ghost" id="modalDownload" target="_blank" rel="noopener">Download brochure</a>
+          <button class="btn btn--primary" id="modalInquire">Inquire for catalogue</button>
+        </div>
+
+        <!-- Inquiry form: hidden until "Inquire for catalogue" is clicked -->
+        <form class="modal__form" id="modalForm" novalidate hidden>
+          <input type="hidden" id="modalProduct" />
+          <div class="field">
+            <label for="mfName">Name</label>
+            <input type="text" id="mfName" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="mfEmail">Email</label>
+            <input type="email" id="mfEmail" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="mfCompany">Company <span class="field__optional">(optional)</span></label>
+            <input type="text" id="mfCompany" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="mfMessage">Message <span class="field__optional">(optional)</span></label>
+            <textarea id="mfMessage" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary">Send inquiry</button>
+          <p class="form__status" id="modalFormStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <span class="brand__mark brand__mark--footer">AIR8</span>
+        <p class="footer__tag">Ventilation &amp; acoustic solutions.</p>
+      </div>
+      <div class="footer__meta">
+        <a href="mailto:sales@air8industries.com">sales@air8industries.com</a>
+        <span>© <span id="year"></span> Air 8 Industries Inc.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ORDER MATTERS: data first, then the engine that uses it, then shared nav script -->
+  <script src="products-data.js"></script>
+  <script src="products.js"></script>
+  <script src="nav.js"></script>
+</body>
+</html>

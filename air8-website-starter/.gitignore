@@ -1,0 +1,12 @@
+# Installed packages — huge and rebuildable, never commit these.
+node_modules/
+
+# Secrets — never commit real credentials.
+.env
+
+# OS / editor noise
+.DS_Store
+*.log
+
+# Local Claude Code state — not part of the site.
+.claude/
