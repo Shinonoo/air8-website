@@ -60,8 +60,8 @@ form.addEventListener("submit", async function (event) {
     message: form.message.value.trim(),
   };
 
-  if (!data.name || !data.email || !data.phone || !data.message) {
-    showStatus("Please fill in your name, email, phone and message.", "error");
+  if (!data.name || !data.email || !data.message) {
+    showStatus("Please fill in your name, email and message.", "error");
     return;
   }
 

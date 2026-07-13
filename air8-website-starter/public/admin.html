@@ -51,6 +51,10 @@
       font: inherit; font-size: 0.85rem; padding: 0.35rem 0.5rem;
       border: 1px solid var(--line); border-radius: 8px; background: #fff;
     }
+    #productsTab code {
+      font-family: var(--font-mono); font-size: 0.85em;
+      background: var(--bg); border-radius: 4px; padding: 0.1em 0.4em;
+    }
   </style>
 </head>
 <body class="admin">
@@ -84,6 +88,32 @@
 
     <!-- PRODUCTS TAB -->
     <section id="productsTab">
+      <div class="admin-panel">
+        <h2>Bulk import (CSV)</h2>
+        <p style="color:var(--steel); font-size:0.88rem; margin-bottom:1rem;">
+          Adding a lot of products? Paste or upload a CSV instead of filling the form below one at a time.
+          New brands/categories are created automatically. Re-importing the same
+          brand + name + code updates that product instead of duplicating it.
+        </p>
+        <p style="font-size:0.82rem; margin-bottom:1rem;">
+          <a href="/api/admin/products/bulk-import/template" download>Download a template CSV</a>
+          — columns: <code>brand, category, name, code, description, image, brochure, specs, featured, published</code>.
+          Multiple categories: separate with <code>|</code> (e.g. <code>Fans|Blowers</code>).
+          Specs: <code>label:value;label:value</code> (e.g. <code>diameter:315-2000mm;capacity:360000 m3/h</code>).
+        </p>
+        <div class="field">
+          <label for="bulkFile">Upload a .csv file <span class="field__optional">(or paste below)</span></label>
+          <input type="file" id="bulkFile" accept=".csv,text/csv" />
+        </div>
+        <div class="field">
+          <label for="bulkCsv">Paste CSV</label>
+          <textarea id="bulkCsv" rows="6" placeholder="brand,category,name,code,description,image,brochure,specs,featured,published"></textarea>
+        </div>
+        <button type="button" class="btn btn--primary" id="bulkImportBtn">Import products</button>
+        <p class="form__status" id="bulkImportStatus" role="status" aria-live="polite"></p>
+        <div id="bulkImportErrors" class="admin-hidden" style="margin-top:0.75rem; font-size:0.82rem; color:#c23b3b; max-height:180px; overflow-y:auto;"></div>
+      </div>
+
       <div class="admin-panel">
         <h2 id="productFormTitle">Add a product</h2>
         <form id="productForm" novalidate>

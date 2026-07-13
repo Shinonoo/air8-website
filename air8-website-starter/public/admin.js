@@ -250,6 +250,53 @@ document.getElementById("productForm").addEventListener("submit", async function
   }
 });
 
+/* ---- Bulk import (CSV) ---- */
+document.getElementById("bulkFile").addEventListener("change", function () {
+  const file = this.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { document.getElementById("bulkCsv").value = reader.result; };
+  reader.readAsText(file);
+});
+
+document.getElementById("bulkImportBtn").addEventListener("click", async function () {
+  const statusEl = document.getElementById("bulkImportStatus");
+  const errorsEl = document.getElementById("bulkImportErrors");
+  const csv = document.getElementById("bulkCsv").value;
+
+  if (!csv.trim()) {
+    statusEl.textContent = "Paste some CSV or choose a file first.";
+    statusEl.className = "form__status is-error";
+    return;
+  }
+
+  const btn = this;
+  btn.disabled = true;
+  statusEl.textContent = "Importing… this can take a moment for a large file.";
+  statusEl.className = "form__status";
+  errorsEl.classList.add("admin-hidden");
+  errorsEl.innerHTML = "";
+
+  try {
+    const result = await api("/api/admin/products/bulk-import", { method: "POST", body: JSON.stringify({ csv }) });
+    statusEl.textContent = `Done — ${result.created} created, ${result.updated} updated${result.errors.length ? `, ${result.errors.length} skipped (see below)` : ""}.`;
+    statusEl.className = result.errors.length ? "form__status" : "form__status is-ok";
+    if (result.errors.length) {
+      errorsEl.innerHTML = result.errors.map((e) => `<div>${e}</div>`).join("");
+      errorsEl.classList.remove("admin-hidden");
+    }
+    document.getElementById("bulkCsv").value = "";
+    document.getElementById("bulkFile").value = "";
+    await Promise.all([loadBrands(), loadCategories()]);
+    await loadProducts();
+  } catch (err) {
+    statusEl.textContent = err.message;
+    statusEl.className = "form__status is-error";
+  } finally {
+    btn.disabled = false;
+  }
+});
+
 /* ---- Inquiries ---- */
 const STATUS_LABELS = { new: "New", contacted: "Contacted", quoted: "Quoted", closed: "Closed" };
 

@@ -49,11 +49,14 @@ app.post("/api/contact", async (req, res) => {
 
   // 1) Basic validation. Never trust data from the internet.
   //    A general contact needs a message; a product inquiry needs a product.
-  //    Phone is required too — sales follow-up in this industry runs on
-  //    calls/Viber as much as email, so a lead without a number is a
-  //    lead the team usually can't act on.
-  if (!name || !email || !phone || (!message && !product)) {
-    return res.status(400).json({ error: "Name, email, phone and a message are required." });
+  //    Phone is required for product inquiries — that's a higher-intent
+  //    lead sales will want to call/Viber back with pricing — but stays
+  //    optional on the general contact form to keep that one low-friction.
+  if (!name || !email || (!message && !product)) {
+    return res.status(400).json({ error: "Name, email and a message are required." });
+  }
+  if (product && !phone) {
+    return res.status(400).json({ error: "A phone number is required for product inquiries." });
   }
   // A very light email sanity check (not perfect, just catches typos).
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -73,7 +76,7 @@ app.post("/api/contact", async (req, res) => {
     const [result] = await pool.query(
       `INSERT INTO inquiries (name, email, phone, company, message, product_name, source)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [name, email, phone, company || null, message || null, product || null, product ? "product" : "contact"]
+      [name, email, phone || null, company || null, message || null, product || null, product ? "product" : "contact"]
     );
     inquiryId = result.insertId;
   } catch (err) {
