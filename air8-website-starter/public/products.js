@@ -36,14 +36,20 @@ function catList(p) {
   return Array.isArray(p.category) ? p.category : [p.category];
 }
 
-/* ---- Helper: image OR a clean fallback tile ---- */
-function mediaHTML(p) {
+/* ---- Helper: image OR a clean fallback tile ----
+   Grid images are lazy: some product PNGs are 250KB–1MB, and a page of 25
+   eager images downloads several MB at once. loading="lazy" makes the
+   browser fetch only what's near the viewport; decoding="async" keeps the
+   decode off the main thread so scrolling stays smooth. The modal image is
+   eager — it's opened on demand and should show immediately. */
+function mediaHTML(p, opts) {
+  const eager = opts && opts.eager;
   const label =
     p.brand === "Elta Fans" ? "ELTA" :
     p.brand === "Abie Tiger" ? "TIGER" :
     p.brand === "Starduct" ? "STAR" : "AIR8";
   const img = p.image
-    ? `<img class="media__img" src="${p.image}" alt="${p.name}" onerror="this.remove()" />`
+    ? `<img class="media__img" src="${p.image}" alt="${p.name}"${eager ? "" : ' loading="lazy"'} decoding="async" onerror="this.remove()" />`
     : "";
   return `<span class="media__fallback">${label}</span>${img}`;
 }
@@ -182,7 +188,7 @@ grid.addEventListener("click", function (e) {
 });
 
 function openModal(p) {
-  document.getElementById("modalMedia").innerHTML = mediaHTML(p);
+  document.getElementById("modalMedia").innerHTML = mediaHTML(p, { eager: true });
   document.getElementById("modalBrand").textContent = p.brand;
   document.getElementById("modalCode").textContent = p.code || "";
   document.getElementById("modalName").textContent = p.name;

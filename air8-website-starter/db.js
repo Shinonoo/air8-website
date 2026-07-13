@@ -16,6 +16,12 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || "air8_db",
   waitForConnections: true,
   connectionLimit: 10,
+  // Cloud hosts (Railway/Render) silently drop idle TCP connections; without
+  // keep-alives, the first query after a quiet spell dies with ECONNRESET.
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
+  maxIdle: 5,
+  idleTimeout: 60000, // close our own idle connections before the host does
 });
 
 module.exports = pool;

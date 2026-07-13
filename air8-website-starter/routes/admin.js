@@ -9,6 +9,7 @@ const router = express.Router();
 const pool = require("../db");
 const slugify = require("../utils/slugify");
 const requireAdmin = require("../middleware/requireAdmin");
+const cache = require("../utils/apiCache");
 
 // ---- Auth ----
 router.post("/login", (req, res) => {
@@ -227,6 +228,7 @@ async function saveProduct(req, res, existingId) {
   }
   try {
     const result = await upsertProduct(req.body, existingId);
+    cache.invalidate(); // public /api/products must reflect this immediately
     res.json({ ok: true, id: result.id, slug: result.slug });
   } catch (err) {
     console.error("Save product failed:", err.message);
@@ -240,6 +242,7 @@ router.put("/products/:id", (req, res) => saveProduct(req, res, Number(req.param
 router.delete("/products/:id", async (req, res) => {
   try {
     await pool.query("DELETE FROM products WHERE id = ?", [req.params.id]);
+    cache.invalidate();
     res.json({ ok: true });
   } catch (err) {
     console.error("Delete product failed:", err.message);
@@ -350,6 +353,7 @@ router.post("/products/bulk-import", async (req, res) => {
     }
   }
 
+  cache.invalidate(); // one clear after the whole batch
   res.json(result);
 });
 

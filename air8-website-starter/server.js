@@ -13,6 +13,7 @@
 require("dotenv").config();                     // load .env into process.env (SMTP, DB, admin password...)
 const express = require("express");
 const path = require("path");
+const compression = require("compression");
 const nodemailer = require("nodemailer");
 const session = require("express-session");
 const pool = require("./db");
@@ -22,18 +23,61 @@ const adminRouter = require("./routes/admin");
 
 const app = express();                          // create the Express app
 const PORT = process.env.PORT || 3000;          // hosts set PORT for us; 3000 locally
+const IS_PROD = process.env.NODE_ENV === "production";
+
+// Render/Railway sit behind a reverse proxy that terminates HTTPS. Without
+// this, Express thinks every request is plain http and "secure" session
+// cookies would never be sent — locking you out of /admin.html in production.
+if (IS_PROD) app.set("trust proxy", 1);
 
 // --- Middleware (runs on every request, in order) ---
+// gzip every compressible response (HTML/CSS/JS/JSON). The products API alone
+// shrinks ~5x (107KB -> ~21KB), which matters on hobby-plan bandwidth.
+app.use(compression());
 app.use(express.json());                        // lets us read JSON bodies (the form data)
-app.use(express.static(path.join(__dirname, "public"))); // serve index.html, css, js, images
+
+// Static files with sane browser caching so repeat visits don't re-download
+// 20MB of product images:
+//  - images/brochures rarely change -> cache 7 days
+//  - css/js change with deploys      -> cache 1 hour (etag revalidates anyway)
+//  - html                            -> always revalidate (so edits show up)
+app.use(express.static(path.join(__dirname, "public"), {
+  etag: true,
+  lastModified: true,
+  setHeaders(res, filePath) {
+    if (/\.(png|jpe?g|webp|gif|svg|ico|pdf|woff2?)$/i.test(filePath)) {
+      res.setHeader("Cache-Control", "public, max-age=604800"); // 7 days
+    } else if (/\.(css|js)$/i.test(filePath)) {
+      res.setHeader("Cache-Control", "public, max-age=3600");   // 1 hour
+    } else {
+      res.setHeader("Cache-Control", "no-cache");               // html: revalidate
+    }
+  },
+}));
 
 // Sessions back the /admin.html login — one shared ADMIN_PASSWORD, no user table.
 app.use(session({
   secret: process.env.SESSION_SECRET || "dev-only-secret-change-me",
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 * 8 }, // 8 hours
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 8, // 8 hours
+    httpOnly: true,             // JS can't read the session cookie
+    sameSite: "lax",            // basic CSRF protection for the admin API
+    secure: IS_PROD,            // HTTPS-only in production (Render/Railway)
+  },
 }));
+
+// Uptime probe for Render/Railway health checks (also pings the DB so a
+// "healthy" response really means the whole stack works).
+app.get("/healthz", async (req, res) => {
+  try {
+    await pool.query("SELECT 1");
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(503).json({ ok: false, error: "database unreachable" });
+  }
+});
 
 // Product catalog + editable site content (public reads), and admin
 // (protected CRUD + inquiries + content editing) routers.

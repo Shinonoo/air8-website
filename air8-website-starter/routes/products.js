@@ -9,9 +9,18 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const cache = require("../utils/apiCache");
 
 router.get("/products", async (req, res) => {
   try {
+    // Serve from memory when we can — the catalog only changes on admin
+    // edits (which call cache.invalidate()), so most requests skip the DB.
+    const cached = cache.get("products");
+    if (cached) {
+      res.set("Cache-Control", "no-cache");
+      return res.json(cached);
+    }
+
     const [products] = await pool.query(
       `SELECT p.id, p.slug, p.name, p.code, p.short_description, p.primary_image_url, p.brochure_url,
               b.name AS brand
@@ -49,20 +58,21 @@ router.get("/products", async (req, res) => {
       specsByProduct.get(row.product_id).push({ label: row.label, value: row.value });
     }
 
-    res.json(
-      products.map((p) => ({
-        id: p.id,
-        slug: p.slug,
-        brand: p.brand,
-        category: categoriesByProduct.get(p.id) || [],
-        name: p.name,
-        code: p.code || "",
-        image: p.primary_image_url || "",
-        blurb: p.short_description || "",
-        brochure: p.brochure_url || "",
-        specs: specsByProduct.get(p.id) || [],
-      }))
-    );
+    const payload = products.map((p) => ({
+      id: p.id,
+      slug: p.slug,
+      brand: p.brand,
+      category: categoriesByProduct.get(p.id) || [],
+      name: p.name,
+      code: p.code || "",
+      image: p.primary_image_url || "",
+      blurb: p.short_description || "",
+      brochure: p.brochure_url || "",
+      specs: specsByProduct.get(p.id) || [],
+    }));
+    cache.set("products", payload);
+    res.set("Cache-Control", "no-cache");
+    res.json(payload);
   } catch (err) {
     console.error("GET /api/products failed:", err.message);
     res.status(500).json({ error: "Could not load products." });
