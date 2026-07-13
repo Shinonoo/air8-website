@@ -45,12 +45,15 @@ app.use("/api/admin", adminRouter);
 app.post("/api/contact", async (req, res) => {
   // req.body is the data the visitor typed. Pull out each field.
   // "product" is included when the inquiry came from a product popup.
-  const { name, email, company, message, product } = req.body || {};
+  const { name, email, phone, company, message, product } = req.body || {};
 
   // 1) Basic validation. Never trust data from the internet.
   //    A general contact needs a message; a product inquiry needs a product.
-  if (!name || !email || (!message && !product)) {
-    return res.status(400).json({ error: "Name, email and a message are required." });
+  //    Phone is required too — sales follow-up in this industry runs on
+  //    calls/Viber as much as email, so a lead without a number is a
+  //    lead the team usually can't act on.
+  if (!name || !email || !phone || (!message && !product)) {
+    return res.status(400).json({ error: "Name, email, phone and a message are required." });
   }
   // A very light email sanity check (not perfect, just catches typos).
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -58,7 +61,7 @@ app.post("/api/contact", async (req, res) => {
   }
 
   // 2) Always log it so you can see submissions in the server logs.
-  console.log("New enquiry:", { name, email, company, product, message });
+  console.log("New enquiry:", { name, email, phone, company, product, message });
 
   // 3) Save it to the database FIRST — this is what actually answers
   //    "where did my message go?". Logging alone disappears the moment the
@@ -68,9 +71,9 @@ app.post("/api/contact", async (req, res) => {
   let inquiryId = null;
   try {
     const [result] = await pool.query(
-      `INSERT INTO inquiries (name, email, company, message, product_name, source)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, email, company || null, message || null, product || null, product ? "product" : "contact"]
+      `INSERT INTO inquiries (name, email, phone, company, message, product_name, source)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [name, email, phone, company || null, message || null, product || null, product ? "product" : "contact"]
     );
     inquiryId = result.insertId;
   } catch (err) {

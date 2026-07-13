@@ -55,12 +55,13 @@ form.addEventListener("submit", async function (event) {
   const data = {
     name: form.name.value.trim(),
     email: form.email.value.trim(),
+    phone: form.phone.value.trim(),
     company: form.company.value.trim(),
     message: form.message.value.trim(),
   };
 
-  if (!data.name || !data.email || !data.message) {
-    showStatus("Please fill in your name, email and message.", "error");
+  if (!data.name || !data.email || !data.phone || !data.message) {
+    showStatus("Please fill in your name, email, phone and message.", "error");
     return;
   }
 

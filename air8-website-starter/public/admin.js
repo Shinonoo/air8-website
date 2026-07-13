@@ -251,6 +251,8 @@ document.getElementById("productForm").addEventListener("submit", async function
 });
 
 /* ---- Inquiries ---- */
+const STATUS_LABELS = { new: "New", contacted: "Contacted", quoted: "Quoted", closed: "Closed" };
+
 async function loadInquiries() {
   const inquiries = await api("/api/admin/inquiries");
   const unread = inquiries.filter((i) => !i.is_read).length;
@@ -260,17 +262,38 @@ async function loadInquiries() {
   body.innerHTML = inquiries
     .map((i) => {
       const date = new Date(i.created_at).toLocaleString();
+      const statusOptions = Object.keys(STATUS_LABELS)
+        .map((s) => `<option value="${s}" ${i.status === s ? "selected" : ""}>${STATUS_LABELS[s]}</option>`)
+        .join("");
       return `
         <tr>
           <td>${date}</td>
-          <td>${i.name}<br><span style="color:var(--steel);font-size:0.8rem;">${i.email}${i.company ? " · " + i.company : ""}</span></td>
+          <td>
+            ${i.name}<br>
+            <span style="color:var(--steel);font-size:0.8rem;">
+              ${i.email}${i.phone ? " · " + i.phone : ""}${i.company ? " · " + i.company : ""}
+            </span>
+          </td>
           <td>${i.product_name || "—"}</td>
           <td style="max-width:280px;">${i.message || "<em>(catalogue request)</em>"}</td>
           <td>${i.email_sent ? '<span class="pill pill--ok">Sent</span>' : '<span class="pill">Not sent</span>'}</td>
+          <td><select class="inquiry-status" data-id="${i.id}">${statusOptions}</select></td>
         </tr>
       `;
     })
     .join("");
+
+  body.querySelectorAll(".inquiry-status").forEach((select) => {
+    select.addEventListener("change", async function () {
+      await api(`/api/admin/inquiries/${select.dataset.id}/status`, {
+        method: "PUT",
+        body: JSON.stringify({ status: select.value }),
+      });
+      const unreadNow = await api("/api/admin/inquiries");
+      const stillUnread = unreadNow.filter((i) => !i.is_read).length;
+      document.getElementById("unreadBadge").textContent = stillUnread ? `(${stillUnread})` : "";
+    });
+  });
 }
 
 checkSession();

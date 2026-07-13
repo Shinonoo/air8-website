@@ -279,10 +279,12 @@ CREATE TABLE `inquiries` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(160) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `phone` varchar(40) DEFAULT NULL,
   `company` varchar(160) DEFAULT NULL,
   `message` text DEFAULT NULL,
   `product_name` varchar(255) DEFAULT NULL,
   `source` enum('contact','product') NOT NULL DEFAULT 'contact',
+  `status` enum('new','contacted','quoted','closed') NOT NULL DEFAULT 'new',
   `email_sent` tinyint(1) NOT NULL DEFAULT 0,
   `is_read` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()

@@ -254,4 +254,15 @@ router.put("/inquiries/:id/read", async (req, res) => {
   res.json({ ok: true });
 });
 
+const VALID_STATUSES = ["new", "contacted", "quoted", "closed"];
+router.put("/inquiries/:id/status", async (req, res) => {
+  const { status } = req.body || {};
+  if (!VALID_STATUSES.includes(status)) {
+    return res.status(400).json({ error: "Invalid status." });
+  }
+  // Moving a lead off "new" implies someone has looked at it.
+  await pool.query("UPDATE inquiries SET status = ?, is_read = 1 WHERE id = ?", [status, req.params.id]);
+  res.json({ ok: true });
+});
+
 module.exports = router;

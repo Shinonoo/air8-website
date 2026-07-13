@@ -264,12 +264,13 @@ document.getElementById("modalForm").addEventListener("submit", async function (
   const data = {
     name: document.getElementById("mfName").value.trim(),
     email: document.getElementById("mfEmail").value.trim(),
+    phone: document.getElementById("mfPhone").value.trim(),
     company: document.getElementById("mfCompany").value.trim(),
     message: document.getElementById("mfMessage").value.trim(),
     product: document.getElementById("modalProduct").value,
   };
-  if (!data.name || !data.email) {
-    statusEl.textContent = "Please add your name and email.";
+  if (!data.name || !data.email || !data.phone) {
+    statusEl.textContent = "Please add your name, email and phone.";
     statusEl.className = "form__status is-error";
     return;
   }

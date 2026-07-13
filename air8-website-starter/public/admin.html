@@ -47,6 +47,10 @@
     .btn--small { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
     .btn--danger { border-color: #c23b3b; color: #c23b3b; background: transparent; }
     .btn--danger:hover { background: #c23b3b; color: #fff; }
+    .inquiry-status {
+      font: inherit; font-size: 0.85rem; padding: 0.35rem 0.5rem;
+      border: 1px solid var(--line); border-radius: 8px; background: #fff;
+    }
   </style>
 </head>
 <body class="admin">
@@ -170,7 +174,7 @@
         <div style="overflow-x:auto;">
           <table class="admin-table">
             <thead>
-              <tr><th>Date</th><th>From</th><th>Product</th><th>Message</th><th>Email</th></tr>
+              <tr><th>Date</th><th>From</th><th>Product</th><th>Message</th><th>Email</th><th>Status</th></tr>
             </thead>
             <tbody id="inquiriesTableBody"></tbody>
           </table>
