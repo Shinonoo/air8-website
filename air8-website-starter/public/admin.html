@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Air 8 Industries Inc.</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="images/air8_logo.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Admin-only layout. Reuses styles.css variables/buttons/fields so it
+       matches the site instead of looking like a bolted-on tool. */
+    body.admin { background: var(--bg); }
+    .admin-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.5rem; background: var(--navy); color: #fff;
+    }
+    .admin-bar__brand { font-family: var(--font-display); font-weight: 700; }
+    .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+    .admin-hidden { display: none !important; }
+    .admin-login { max-width: 360px; margin: 4rem auto; }
+    .admin-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .admin-tab {
+      padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: 999px;
+      background: #fff; cursor: pointer; font: inherit; font-weight: 600; color: var(--steel);
+    }
+    .admin-tab.is-active { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .admin-panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; }
+    .admin-panel h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; }
+    .admin-row-2 { grid-column: 1 / -1; }
+    .admin-checks { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.1rem; }
+    .admin-check { display: flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; border: 1px solid var(--line); border-radius: 8px; padding: 0.35rem 0.6rem; }
+    .admin-inline { display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 1.1rem; }
+    .admin-inline .field { flex: 1; margin-bottom: 0; }
+    .admin-specs-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .admin-specs-row input { flex: 1; }
+    table.admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    table.admin-table th, table.admin-table td { text-align: left; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+    table.admin-table th { color: var(--steel); font-weight: 600; }
+    .pill { display: inline-block; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); margin: 0 0.2rem 0.2rem 0; }
+    .pill--warn { background: #fdf1e0; border-color: #f2a93b; }
+    .pill--ok { background: #e9f7ef; border-color: #197a4b; }
+    .row-actions { display: flex; gap: 0.5rem; }
+    .row-actions button { font-size: 0.8rem; padding: 0.3rem 0.6rem; }
+    .btn--small { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+    .btn--danger { border-color: #c23b3b; color: #c23b3b; background: transparent; }
+    .btn--danger:hover { background: #c23b3b; color: #fff; }
+  </style>
+</head>
+<body class="admin">
+
+  <div class="admin-bar">
+    <span class="admin-bar__brand">AIR8 · Admin</span>
+    <button class="btn btn--ghost btn--small admin-hidden" id="logoutBtn" style="border-color:#fff;color:#fff;">Log out</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="admin-wrap admin-login" id="loginView">
+    <div class="admin-panel">
+      <h2>Sign in</h2>
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="loginPassword">Admin password</label>
+          <input type="password" id="loginPassword" required autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn btn--primary">Sign in</button>
+        <p class="form__status" id="loginStatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="admin-wrap admin-hidden" id="dashboardView">
+    <div class="admin-tabs">
+      <button class="admin-tab is-active" data-tab="products">Products</button>
+      <button class="admin-tab" data-tab="messages">Messages <span id="unreadBadge"></span></button>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <section id="productsTab">
+      <div class="admin-panel">
+        <h2 id="productFormTitle">Add a product</h2>
+        <form id="productForm" novalidate>
+          <input type="hidden" id="pfId" />
+          <div class="admin-grid">
+            <div class="field">
+              <label for="pfBrand">Brand</label>
+              <select id="pfBrand" required></select>
+            </div>
+            <div class="field">
+              <label for="pfCode">Code / model</label>
+              <input type="text" id="pfCode" />
+            </div>
+          </div>
+          <div class="admin-inline">
+            <div class="field">
+              <label for="pfNewBrand">Add a new brand</label>
+              <input type="text" id="pfNewBrand" placeholder="e.g. New Brand Co." />
+            </div>
+            <button type="button" class="btn btn--ghost btn--small" id="pfAddBrand">Add brand</button>
+          </div>
+
+          <div class="field">
+            <label for="pfName">Product name</label>
+            <input type="text" id="pfName" required />
+          </div>
+
+          <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.4rem;">Categories</label>
+          <div class="admin-checks" id="pfCategories"></div>
+          <div class="admin-inline">
+            <div class="field">
+              <label for="pfNewCategory">Add a new category</label>
+              <input type="text" id="pfNewCategory" placeholder="e.g. New Category" />
+            </div>
+            <button type="button" class="btn btn--ghost btn--small" id="pfAddCategory">Add category</button>
+          </div>
+
+          <div class="field">
+            <label for="pfDesc">Short description</label>
+            <textarea id="pfDesc" rows="3"></textarea>
+          </div>
+
+          <div class="admin-grid">
+            <div class="field">
+              <label for="pfImage">Image path</label>
+              <input type="text" id="pfImage" placeholder="images/brand/file.png" />
+            </div>
+            <div class="field">
+              <label for="pfBrochure">Brochure path</label>
+              <input type="text" id="pfBrochure" placeholder="brochures/brand/file.pdf" />
+            </div>
+          </div>
+
+          <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.4rem;">Specs</label>
+          <div id="pfSpecs"></div>
+          <button type="button" class="btn btn--ghost btn--small" id="pfAddSpec" style="margin-bottom:1.1rem;">+ Add spec</button>
+
+          <div class="admin-checks">
+            <label class="admin-check"><input type="checkbox" id="pfFeatured" /> Featured</label>
+            <label class="admin-check"><input type="checkbox" id="pfPublished" checked /> Published</label>
+          </div>
+
+          <div class="row-actions">
+            <button type="submit" class="btn btn--primary">Save product</button>
+            <button type="button" class="btn btn--ghost admin-hidden" id="pfCancelEdit">Cancel edit</button>
+          </div>
+          <p class="form__status" id="productFormStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="admin-panel">
+        <h2>All products (<span id="productCount">0</span>)</h2>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Brand</th><th>Name</th><th>Categories</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- MESSAGES TAB -->
+    <section id="messagesTab" class="admin-hidden">
+      <div class="admin-panel">
+        <h2>Inquiries</h2>
+        <div style="overflow-x:auto;">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Date</th><th>From</th><th>Product</th><th>Message</th><th>Email</th></tr>
+            </thead>
+            <tbody id="inquiriesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

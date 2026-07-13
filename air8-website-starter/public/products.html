@@ -2,15 +2,15 @@
 <!--
   Products catalog page.
   Notice how SHORT this file is even though it can show hundreds of
-  products: the products live in products-data.js, and products.js
-  draws them. This page is just the frame.
+  products: they live in the database (air8_db.sql) and products.js
+  fetches + draws them from GET /api/products. This page is just the frame.
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Products — Air 8 Industries Inc.</title>
-  <meta name="description" content="Browse fans, blowers and acoustic products from Elta Fans and Abie Tiger, with downloadable brochures." />
+  <meta name="description" content="Browse fans, blowers, acoustic and ductwork products from Elta Fans, Abie Tiger and Starduct, with downloadable brochures." />
   <link rel="icon" href="images/air8_logo.png" type="image/png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -53,9 +53,9 @@
     <section class="catalog-hero">
       <div class="container container--wide">
         <p class="eyebrow">Products</p>
-        <h1 class="catalog-hero__title">Fans, blowers &amp; acoustic systems</h1>
+        <h1 class="catalog-hero__title">Fans, blowers, acoustic &amp; ductwork systems</h1>
         <p class="catalog-hero__lead">
-          Everything we supply from Elta Fans and Abie Tiger. Filter by type or search,
+          Everything we supply from Elta Fans, Abie Tiger and Starduct. Filter by type or search,
           then download the brochure for full specifications.
         </p>
       </div>
@@ -172,8 +172,7 @@
     </div>
   </footer>
 
-  <!-- ORDER MATTERS: data first, then the engine that uses it, then shared nav script -->
-  <script src="products-data.js"></script>
+  <!-- products.js fetches the catalog from GET /api/products (database-backed) -->
   <script src="products.js"></script>
   <script src="nav.js"></script>
 </body>

@@ -96,6 +96,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .cards { display: grid; gap: 1.25rem; margin-top: 2.5rem; }
 .cards--2 { grid-template-columns: repeat(2, 1fr); }
 .cards--3 { grid-template-columns: repeat(2, 1fr); }
+.cards--triple { grid-template-columns: repeat(3, 1fr); }
 
 /* Shared small "eyebrow" label above headings — echoes your catalog codes */
 .eyebrow {
@@ -353,6 +354,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
   .cards--2 { grid-template-columns: 1fr; }
   .cards--3 { grid-template-columns: 1fr; }
+  .cards--triple { grid-template-columns: 1fr; }
   .values { grid-template-columns: 1fr; }
 
   /* Show hamburger, hide the desktop menu until toggled open */

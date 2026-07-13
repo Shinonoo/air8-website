@@ -10,9 +10,14 @@
    ============================================================ */
 
 // "require" pulls in code other people wrote so we don't reinvent it.
+require("dotenv").config();                     // load .env into process.env (SMTP, DB, admin password...)
 const express = require("express");
 const path = require("path");
 const nodemailer = require("nodemailer");
+const session = require("express-session");
+const pool = require("./db");
+const productsRouter = require("./routes/products");
+const adminRouter = require("./routes/admin");
 
 const app = express();                          // create the Express app
 const PORT = process.env.PORT || 3000;          // hosts set PORT for us; 3000 locally
@@ -20,6 +25,18 @@ const PORT = process.env.PORT || 3000;          // hosts set PORT for us; 3000 l
 // --- Middleware (runs on every request, in order) ---
 app.use(express.json());                        // lets us read JSON bodies (the form data)
 app.use(express.static(path.join(__dirname, "public"))); // serve index.html, css, js, images
+
+// Sessions back the /admin.html login — one shared ADMIN_PASSWORD, no user table.
+app.use(session({
+  secret: process.env.SESSION_SECRET || "dev-only-secret-change-me",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 * 8 }, // 8 hours
+}));
+
+// Product catalog (public reads) and admin (protected CRUD + inquiries) routers.
+app.use("/api", productsRouter);
+app.use("/api/admin", adminRouter);
 
 /* ------------------------------------------------------------
    THE CONTACT ROUTE
@@ -43,9 +60,26 @@ app.post("/api/contact", async (req, res) => {
   // 2) Always log it so you can see submissions in the server logs.
   console.log("New enquiry:", { name, email, company, product, message });
 
-  // 3) Try to email it to your sales inbox — but only if SMTP is configured.
+  // 3) Save it to the database FIRST — this is what actually answers
+  //    "where did my message go?". Logging alone disappears the moment the
+  //    server restarts; SMTP alone silently drops everything until it's
+  //    configured. The database keeps every enquiry either way, and the
+  //    admin panel's Messages tab reads straight from this table.
+  let inquiryId = null;
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO inquiries (name, email, company, message, product_name, source)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, email, company || null, message || null, product || null, product ? "product" : "contact"]
+    );
+    inquiryId = result.insertId;
+  } catch (err) {
+    console.error("Could not save enquiry to the database:", err.message);
+  }
+
+  // 4) Try to email it to your sales inbox — but only if SMTP is configured.
   //    Until you add the SMTP_* values (see .env.example), this step is skipped
-  //    and the form still "works" (message is logged and success is returned).
+  //    and the form still "works" (message is saved above and success is returned).
   try {
     if (process.env.SMTP_HOST) {
       const transporter = nodemailer.createTransport({
@@ -82,13 +116,18 @@ app.post("/api/contact", async (req, res) => {
           (product ? `, including the catalogue you requested.` : `.`) +
           `\n\n— Air 8 Industries Inc.\nsales@air8industries.com`,
       });
+
+      if (inquiryId) {
+        pool.query("UPDATE inquiries SET email_sent = 1 WHERE id = ?", [inquiryId]).catch(() => {});
+      }
     }
 
-    // 4) Tell the browser it worked.
+    // 5) Tell the browser it worked.
     return res.json({ ok: true });
   } catch (err) {
     console.error("Email send failed:", err.message);
-    // The message was still logged above, so we don't lose it — but report failure.
+    // The message was already saved to the database above, so it isn't lost —
+    // but the visitor didn't get their auto-reply, so report failure.
     return res.status(500).json({ error: "Could not send message." });
   }
 });

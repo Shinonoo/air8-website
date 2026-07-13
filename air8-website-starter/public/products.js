@@ -1,14 +1,16 @@
 /* ============================================================
    Air 8 Industries — products.js  (catalog engine + popup)
    ------------------------------------------------------------
-   1. Builds Brand / Category / Sort dropdowns FROM your data
-   2. Filters + sorts the grid
-   3. Opens the popup (image left, details right, actions)
-   Add products in products-data.js — not here.
+   1. Loads the catalog from GET /api/products (backed by the
+      air8_db database — see routes/products.js)
+   2. Builds Brand / Category / Sort dropdowns FROM that data
+   3. Filters + sorts the grid
+   4. Opens the popup (image left, details right, actions)
+   Add/edit products via the /admin.html panel — not here.
    ============================================================ */
 
 /* ---- Elements ---- */
-const grid = document.getElementById("productGrid"); 
+const grid = document.getElementById("productGrid");
 const searchInput = document.getElementById("productSearch");
 const brandFilter = document.getElementById("brandFilter");
 const categoryFilter = document.getElementById("categoryFilter");
@@ -24,6 +26,10 @@ let scrollLockY = 0;
 const PAGE_SIZE = 25;
 let catalogPage = 1;
 
+// Populated by init() from the API — same shape products-data.js used to
+// provide (brand, category, name, code, image, blurb, brochure, specs).
+let PRODUCTS = [];
+
 /* ---- Helper: a product's categories, always as a list ---- */
 // category can be "Roof Mounted Fans" OR ["A", "B"]. This makes both work.
 function catList(p) {
@@ -33,7 +39,9 @@ function catList(p) {
 /* ---- Helper: image OR a clean fallback tile ---- */
 function mediaHTML(p) {
   const label =
-    p.brand === "Elta Fans" ? "ELTA" : p.brand === "Abie Tiger" ? "TIGER" : "AIR8";
+    p.brand === "Elta Fans" ? "ELTA" :
+    p.brand === "Abie Tiger" ? "TIGER" :
+    p.brand === "Starduct" ? "STAR" : "AIR8";
   const img = p.image
     ? `<img class="media__img" src="${p.image}" alt="${p.name}" onerror="this.remove()" />`
     : "";
@@ -46,11 +54,6 @@ function fillSelect(selectEl, values, allLabel) {
     `<option value="all">${allLabel}</option>` +
     values.map((v) => `<option value="${v}">${v}</option>`).join("");
 }
-
-// Unique, sorted brands.
-const brands = [...new Set(PRODUCTS.map((p) => p.brand))].sort();
-
-fillSelect(brandFilter, brands, "All brands");
 
 /* ---- Category options depend on the selected brand ----
    Picking a brand shouldn't leave 25+ unrelated categories in the list —
@@ -67,7 +70,6 @@ function refreshCategoryOptions() {
   // Keep the previous choice if it still applies to this brand, else reset.
   categoryFilter.value = cats.includes(prevValue) ? prevValue : "all";
 }
-refreshCategoryOptions();
 
 brandFilter.addEventListener("change", function () {
   refreshCategoryOptions();
@@ -293,4 +295,22 @@ document.getElementById("modalForm").addEventListener("submit", async function (
   }
 });
 
-render();
+/* ---- Load the catalog from the database, then draw everything ---- */
+async function init() {
+  try {
+    const res = await fetch("/api/products");
+    if (!res.ok) throw new Error("Request failed");
+    PRODUCTS = await res.json();
+  } catch (err) {
+    grid.innerHTML = '<p class="empty">Could not load products right now. Please try again shortly.</p>';
+    countEl.textContent = "";
+    return;
+  }
+
+  const brands = [...new Set(PRODUCTS.map((p) => p.brand))].sort();
+  fillSelect(brandFilter, brands, "All brands");
+  refreshCategoryOptions();
+  render();
+}
+
+init();

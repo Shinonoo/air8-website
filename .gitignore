@@ -1,0 +1,9 @@
+# This git repo is rooted at C:\code\air8, but the actual tracked project is
+# the air8-website-starter/ subfolder (it has its own .gitignore for
+# node_modules, .env, etc). Everything below is old prototypes / scratch
+# work that lives alongside it on disk and was never meant to be committed —
+# ignore it here so `git status` / `git add -A` stay clean.
+/air8-website-starter_v1/
+/air8-website-starter_v2/
+/backend/
+/frontend/

@@ -1640,5 +1640,99 @@ const PRODUCTS = [
   brochure: "brochures/abie_tiger/airborne_noise_specification.pdf",
 },
 
+/* ---------- STARDUCT · Ductwork ---------- */
+{
+  brand: "Starduct",
+  category: "Ductwork",
+  name: "Spiral & Rectangular Ductwork",
+  code: "",
+  image: "",
+  blurb:
+    "Factory-fabricated spiral and rectangular ductwork for commercial and industrial air distribution, manufactured to AMCA, ASHRAE, UL and ISO standards.",
+  specs: [
+    { value: "AMCA / ASHRAE", label: "design standards" },
+    { value: "UL / ISO", label: "certified" },
+  ],
+  brochure: "",
+},
+
+/* ---------- STARDUCT · Diffusers & Air Outlets ---------- */
+{
+  brand: "Starduct",
+  category: "Diffusers & Air Outlets",
+  name: "Diffusers & Air Outlets",
+  code: "",
+  image: "",
+  blurb:
+    "Supply and return air diffusers, grilles and outlets engineered for even air distribution and quiet operation.",
+  brochure: "",
+},
+
+/* ---------- STARDUCT · Fire & Smoke Dampers ---------- */
+{
+  brand: "Starduct",
+  category: "Fire & Smoke Dampers",
+  name: "Fire & Smoke Dampers",
+  code: "",
+  image: "",
+  blurb:
+    "Fire and smoke dampers that seal ductwork at fire-rated barriers, isolating smoke and flame spread to protect life-safety systems.",
+  brochure: "",
+},
+
+/* ---------- STARDUCT · Volume Control Dampers ---------- */
+{
+  brand: "Starduct",
+  category: "Volume Control Dampers",
+  name: "Volume Control Dampers (VCD)",
+  code: "VCD",
+  image: "",
+  blurb:
+    "Manual and motorized volume control dampers for balancing airflow across a duct network, plus butterfly valves for simple on/off control.",
+  brochure: "",
+},
+
+/* ---------- STARDUCT · VAV Boxes ---------- */
+{
+  brand: "Starduct",
+  category: "VAV Boxes",
+  name: "VAV Boxes",
+  code: "",
+  image: "",
+  blurb:
+    "Variable air volume boxes that modulate airflow to each zone, matching supply to real-time heating and cooling demand.",
+  brochure: "",
+},
+
+/* ---------- STARDUCT · Duct Silencers ---------- */
+{
+  brand: "Starduct",
+  category: "Duct Silencers",
+  name: "Duct Silencers",
+  code: "",
+  image: "",
+  blurb:
+    "Rectangular and circular duct silencers that attenuate fan and airflow noise travelling through the ductwork.",
+  brochure: "",
+},
+
+/* ---------- STARDUCT · Cable Trays & Supports ---------- */
+{
+  brand: "Starduct",
+  category: "Cable Trays & Supports",
+  name: "Cable Trays & Duct Supports",
+  code: "",
+  image: "",
+  blurb:
+    "Cable trays, ductwork hangers and structural supports for coordinated MEP installations.",
+  brochure: "",
+},
 
 ];
+
+// Lets scripts/migrate-products.js `require()` this file from Node to seed
+// the database. Browsers never define `module`, so this is a no-op there —
+// PRODUCTS stays a plain global for products.js to use as before.
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = PRODUCTS;
+}
