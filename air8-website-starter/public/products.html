@@ -59,9 +59,9 @@
     <!-- Page intro -->
     <section class="catalog-hero">
       <div class="container container--wide">
-        <p class="eyebrow">Products</p>
-        <h1 class="catalog-hero__title">Fans, blowers, acoustic &amp; ductwork systems</h1>
-        <p class="catalog-hero__lead">
+        <p class="eyebrow" data-content-key="products.hero.eyebrow">Products</p>
+        <h1 class="catalog-hero__title" data-content-key="products.hero.title">Fans, blowers, acoustic &amp; ductwork systems</h1>
+        <p class="catalog-hero__lead" data-content-key="products.hero.lead">
           Everything we supply from Elta Fans, Abie Tiger and Starduct. Filter by type or search,
           then download the brochure for full specifications.
         </p>
@@ -183,6 +183,8 @@
     </div>
   </footer>
 
+  <!-- content.js fills in any admin-edited page text (data-content-key) -->
+  <script src="content.js"></script>
   <!-- products.js fetches the catalog from GET /api/products (database-backed) -->
   <script src="products.js"></script>
   <script src="nav.js"></script>

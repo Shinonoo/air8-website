@@ -17,6 +17,7 @@ const nodemailer = require("nodemailer");
 const session = require("express-session");
 const pool = require("./db");
 const productsRouter = require("./routes/products");
+const contentRouter = require("./routes/content");
 const adminRouter = require("./routes/admin");
 
 const app = express();                          // create the Express app
@@ -34,8 +35,10 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 8 }, // 8 hours
 }));
 
-// Product catalog (public reads) and admin (protected CRUD + inquiries) routers.
+// Product catalog + editable site content (public reads), and admin
+// (protected CRUD + inquiries + content editing) routers.
 app.use("/api", productsRouter);
+app.use("/api", contentRouter);
 app.use("/api/admin", adminRouter);
 
 /* ------------------------------------------------------------

@@ -355,13 +355,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 /* VALUES (dark section) */
 .values { list-style: none; padding: 0; margin: 2.5rem 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
 .values li { color: #c8d3e4; border-left: 2px solid var(--amber); padding-left: 1.1rem; }
-.values li span { display: block; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: #fff; margin-bottom: 0.25rem; }
+/* First span = the value's label (bold heading); any following span is the
+   description text, which should keep the muted body style, not the heading. */
+.values li span:first-child { display: block; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: #fff; margin-bottom: 0.25rem; }
 
 /* CONTACT */
 .grid-2--contact { gap: 3.5rem; }
 .contact-details { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; gap: 1.1rem; }
 .contact-details li { display: grid; gap: 0.15rem; }
-.contact-details span { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
+/* First span = the amber field label; a following span (address/phone value)
+   stays normal body text rather than inheriting the tiny uppercase label style. */
+.contact-details span:first-child { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
 .contact-details a { color: var(--navy); }
 
 /* FORM */

@@ -1,4 +1,13 @@
-(function () {
+// The hero rebuilds #heroTitle into per-letter spans for the animation, so
+// it can't use the shared data-content-key path (that sets textContent).
+// Instead we wait for the content map and read the admin's headline from it.
+// Waiting on contentReady also removes any flash between the HTML default and
+// an edited headline. Falls back to the default if content never loads.
+(window.contentReady || Promise.resolve({})).then(function (content) {
+  startHero((content && content['home.hero.title']) || 'We move air.\nWe control sound.');
+});
+
+function startHero(headlineRaw) {
   const root = document.getElementById('a8Hero');
   const canvas = document.getElementById('heroCanvas');
   const titleEl = document.getElementById('heroTitle');
@@ -8,7 +17,9 @@
   root.style.setProperty('--accent', '#' + accent);
   const [ar, ag, ab] = hexToRgb(accent);
 
-  const headline = 'We move air.|We control sound.';
+  // Lines can be separated by a real newline (from the admin textarea) or the
+  // legacy "|" — accept both.
+  const headline = headlineRaw.split(/\r?\n|\|/).filter(Boolean).join('|');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Build letter spans for the reveal animation
@@ -246,4 +257,4 @@
   setTimeout(play, 4200); // safety net if it never enters viewport
 
   requestAnimationFrame(loop);
-})();
+}

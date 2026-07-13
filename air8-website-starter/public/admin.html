@@ -55,6 +55,34 @@
       font-family: var(--font-mono); font-size: 0.85em;
       background: var(--bg); border-radius: 4px; padding: 0.1em 0.4em;
     }
+    /* Content (page text) tab */
+    .content-group { margin-bottom: 1.75rem; }
+    .content-group__title {
+      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--steel);
+      padding-bottom: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--line);
+    }
+    .content-item { margin-bottom: 1.1rem; }
+    .content-item__head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .content-item__label { font-size: 0.85rem; font-weight: 600; color: var(--ink); }
+    .content-item__edited { font-size: 0.72rem; color: var(--amber); font-weight: 600; }
+    .content-item textarea {
+      width: 100%; font: inherit; font-size: 0.92rem; line-height: 1.5;
+      padding: 0.6rem 0.7rem; border: 1px solid var(--line); border-radius: 8px;
+      background: #fff; resize: vertical;
+    }
+    .content-item textarea:focus { border-color: var(--navy); outline: none; }
+    .content-item__reset {
+      background: none; border: 0; padding: 0; cursor: pointer;
+      font: inherit; font-size: 0.78rem; color: var(--steel); text-decoration: underline;
+    }
+    .content-item__reset:hover { color: var(--navy); }
+    .content-save-bar {
+      position: sticky; bottom: 0; background: #fff; padding-top: 1rem;
+      margin-top: 0.5rem; border-top: 1px solid var(--line);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .content-save-bar .form__status { margin-top: 0; }
     /* Collapsible panel headers — bulk import & the add/edit form default
        to closed so "All products" is visible without scrolling past them. */
     .admin-collapse-toggle {
@@ -107,6 +135,7 @@
     <div class="admin-tabs">
       <button class="admin-tab is-active" data-tab="products">Products</button>
       <button class="admin-tab" data-tab="messages">Messages <span id="unreadBadge"></span></button>
+      <button class="admin-tab" data-tab="content">Page text</button>
     </div>
 
     <!-- PRODUCTS TAB -->
@@ -281,6 +310,24 @@
             </thead>
             <tbody id="inquiriesTableBody"></tbody>
           </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE TEXT (CONTENT) TAB -->
+    <section id="contentTab" class="admin-hidden">
+      <div class="admin-panel">
+        <h2>Edit page text</h2>
+        <p style="color:var(--steel); font-size:0.88rem; margin-bottom:1rem;">
+          Reword any text block on the public site. Changes go live as soon as you save.
+          Leave a block untouched to keep the original wording; use <em>Reset</em> to put a
+          single block back to its original text. The headline can span multiple lines —
+          just press Enter for a new line.
+        </p>
+        <div id="contentGroups"></div>
+        <div class="content-save-bar">
+          <button type="button" class="btn btn--primary" id="contentSaveBtn">Save changes</button>
+          <span class="form__status" id="contentStatus" role="status" aria-live="polite"></span>
         </div>
       </div>
     </section>

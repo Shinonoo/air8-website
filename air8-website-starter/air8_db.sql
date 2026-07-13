@@ -297,6 +297,33 @@ ALTER TABLE `inquiries`
 ALTER TABLE `inquiries`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `site_content`
+-- (editable text blocks for the marketing pages. Each row is one
+-- "slot" the admin panel can reword — keyed by a stable content_key
+-- that matches a data-content-key attribute in the HTML. The HTML keeps
+-- the original copy as a fallback; `value` is only served to the front
+-- end when it differs from `default_value`, i.e. the admin has actually
+-- changed it. `default_value` is the seeded original, used for the
+-- "reset to default" action and to decide whether a row is an override.)
+--
+
+CREATE TABLE `site_content` (
+  `content_key` varchar(120) NOT NULL,
+  `group_name` varchar(80) NOT NULL DEFAULT 'General',
+  `label` varchar(200) NOT NULL,
+  `value` text DEFAULT NULL,
+  `default_value` text DEFAULT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `site_content`
+  ADD PRIMARY KEY (`content_key`),
+  ADD KEY `idx_site_content_group` (`group_name`,`sort_order`);
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -64,13 +64,14 @@ logoutBtn.addEventListener("click", async function () {
 });
 
 /* ---- Tabs ---- */
+const TAB_SECTIONS = { products: "productsTab", messages: "messagesTab", content: "contentTab" };
 document.querySelectorAll(".admin-tab").forEach((tab) => {
   tab.addEventListener("click", function () {
     document.querySelectorAll(".admin-tab").forEach((t) => t.classList.remove("is-active"));
     tab.classList.add("is-active");
-    const isProducts = tab.dataset.tab === "products";
-    document.getElementById("productsTab").classList.toggle("admin-hidden", !isProducts);
-    document.getElementById("messagesTab").classList.toggle("admin-hidden", isProducts);
+    Object.entries(TAB_SECTIONS).forEach(([name, sectionId]) => {
+      document.getElementById(sectionId).classList.toggle("admin-hidden", name !== tab.dataset.tab);
+    });
   });
 });
 
@@ -95,7 +96,7 @@ setupCollapse("productFormToggle", "productFormBody", function () {
 /* ---- Load everything the dashboard needs ---- */
 async function loadEverything() {
   await Promise.all([loadBrands(), loadCategories()]);
-  await Promise.all([loadProducts(), loadInquiries()]);
+  await Promise.all([loadProducts(), loadInquiries(), loadContent()]);
 }
 
 async function loadBrands() {
@@ -482,5 +483,87 @@ async function loadInquiries() {
     });
   });
 }
+
+/* ---- Page text (site content) ---- */
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+async function loadContent() {
+  const rows = await api("/api/admin/content");
+
+  // Group rows by their section, preserving the seeded order.
+  const groups = [];
+  const byName = new Map();
+  for (const row of rows) {
+    if (!byName.has(row.group_name)) {
+      const g = { name: row.group_name, items: [] };
+      byName.set(row.group_name, g);
+      groups.push(g);
+    }
+    byName.get(row.group_name).items.push(row);
+  }
+
+  const wrap = document.getElementById("contentGroups");
+  wrap.innerHTML = groups
+    .map((g) => {
+      const items = g.items
+        .map((row) => {
+          const val = row.value == null ? "" : row.value;
+          const isEdited = val !== (row.default_value == null ? "" : row.default_value);
+          // One row = ~1 line; grow textareas for longer copy.
+          const lineCount = Math.max(2, Math.ceil((val.length || row.label.length) / 60) + (val.split("\n").length - 1));
+          const rows = Math.min(8, lineCount);
+          return `
+            <div class="content-item" data-key="${escapeHtml(row.content_key)}">
+              <div class="content-item__head">
+                <span class="content-item__label">${escapeHtml(row.label)}${isEdited ? ' <span class="content-item__edited">· edited</span>' : ""}</span>
+                <button type="button" class="content-item__reset" data-reset="${escapeHtml(row.content_key)}">Reset</button>
+              </div>
+              <textarea rows="${rows}" data-input="${escapeHtml(row.content_key)}">${escapeHtml(val)}</textarea>
+            </div>
+          `;
+        })
+        .join("");
+      return `<div class="content-group"><p class="content-group__title">${escapeHtml(g.name)}</p>${items}</div>`;
+    })
+    .join("");
+
+  wrap.querySelectorAll("[data-reset]").forEach((btn) => {
+    btn.addEventListener("click", async function () {
+      if (!confirm("Reset this block back to its original text?")) return;
+      await api(`/api/admin/content/${encodeURIComponent(btn.dataset.reset)}/reset`, { method: "PUT" });
+      await loadContent();
+      flashContentStatus("Block reset to default.", "is-ok");
+    });
+  });
+}
+
+function flashContentStatus(text, cls) {
+  const el = document.getElementById("contentStatus");
+  el.textContent = text;
+  el.className = "form__status " + (cls || "");
+}
+
+document.getElementById("contentSaveBtn").addEventListener("click", async function () {
+  const updates = Array.from(document.querySelectorAll("#contentGroups textarea")).map((ta) => ({
+    content_key: ta.dataset.input,
+    value: ta.value,
+  }));
+  const btn = this;
+  btn.disabled = true;
+  flashContentStatus("Saving…", "");
+  try {
+    await api("/api/admin/content", { method: "PUT", body: JSON.stringify({ updates }) });
+    await loadContent();
+    flashContentStatus("Saved. Changes are live on the site.", "is-ok");
+  } catch (err) {
+    flashContentStatus(err.message, "is-error");
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 checkSession();

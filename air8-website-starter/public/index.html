@@ -79,17 +79,18 @@
       <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
 
       <div class="container hero__inner">
-        <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span>Ventilation &amp; Acoustic Solutions</p>
+        <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span><span data-content-key="home.hero.eyebrow">Ventilation &amp; Acoustic Solutions</span></p>
         <!-- hero-animation.js rebuilds this into per-letter spans for the reveal
-             animation; the plain text below is what shows if JS doesn't run. -->
+             animation; the plain text below is what shows if JS doesn't run.
+             Its editable copy is home.hero.title (read by hero-animation.js). -->
         <h1 class="hero__title" id="heroTitle">We move air.<br />We control sound.</h1>
-        <p class="hero__lead">
+        <p class="hero__lead" data-content-key="home.hero.lead">
           Air 8 Industries Inc. supplies reliable, energy-efficient fans, blowers and
           acoustic systems for industrial, commercial and residential spaces across the Philippines.
         </p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#products">Explore products</a>
-          <a class="btn btn--ghost" href="#contact">Talk to us</a>
+          <a class="btn btn--primary" href="#products" data-content-key="home.hero.cta_primary">Explore products</a>
+          <a class="btn btn--ghost" href="#contact" data-content-key="home.hero.cta_secondary">Talk to us</a>
         </div>
         <div class="hero__tags">
           <span>Industrial Fans</span>
@@ -106,7 +107,7 @@
          ============================================================ -->
     <section class="partners" aria-label="Our brand partners">
       <div class="container partners__inner">
-        <p class="partners__label">Authorized distributor of</p>
+        <p class="partners__label" data-content-key="home.partners.label">Authorized distributor of</p>
         <div class="partners__logos">
           <div class="partner">
             <span class="partner__name">ELTA&nbsp;FANS</span>
@@ -133,18 +134,18 @@
     <section class="section" id="about">
       <div class="container grid-2">
         <div class="reveal">
-          <p class="eyebrow">About us</p>
-          <h2 class="section__title">A dependable partner for air, sound and ductwork.</h2>
+          <p class="eyebrow" data-content-key="home.about.eyebrow">About us</p>
+          <h2 class="section__title" data-content-key="home.about.title">A dependable partner for air, sound and ductwork.</h2>
         </div>
         <div class="reveal">
-          <p class="prose">
+          <p class="prose" data-content-key="home.about.body1">
             We specialize in three connected worlds: air movement through our partnership with
             <strong>Elta Fans</strong>, noise &amp; vibration control through
             <strong>Abie Tiger</strong>, and ductwork &amp; MEP accessories through
             <strong>Starduct</strong>. Our mission is simple — deliver high-quality products
             that meet the exact needs of each client, backed by real technical support.
           </p>
-          <p class="prose">
+          <p class="prose" data-content-key="home.about.body2">
             From a single exhaust fan to a full building enclosure, we help you get the right
             solution the first time.
           </p>
@@ -157,14 +158,14 @@
          ============================================================ -->
     <section class="section section--tint" id="capabilities">
       <div class="container">
-        <p class="eyebrow eyebrow--center">What we do</p>
-        <h2 class="section__title section__title--center">Three problems. One supplier.</h2>
+        <p class="eyebrow eyebrow--center" data-content-key="home.capabilities.eyebrow">What we do</p>
+        <h2 class="section__title section__title--center" data-content-key="home.capabilities.title">Three problems. One supplier.</h2>
 
         <div class="cards cards--triple">
           <article class="card reveal">
             <p class="card__index">AIR</p>
-            <h3 class="card__title">Air movement &amp; ventilation</h3>
-            <p class="card__body">
+            <h3 class="card__title" data-content-key="home.capabilities.card1_title">Air movement &amp; ventilation</h3>
+            <p class="card__body" data-content-key="home.capabilities.card1_body">
               Axial, centrifugal, roof, in-line and hazardous-area fans — plus blowers,
               controls and accessories for optimal airflow in any environment.
             </p>
@@ -172,8 +173,8 @@
 
           <article class="card reveal">
             <p class="card__index">SOUND</p>
-            <h3 class="card__title">Noise &amp; vibration control</h3>
-            <p class="card__body">
+            <h3 class="card__title" data-content-key="home.capabilities.card2_title">Noise &amp; vibration control</h3>
+            <p class="card__body" data-content-key="home.capabilities.card2_body">
               Silencers, acoustic louvers, sound-lock doors, barriers, enclosures and a full
               range of vibration isolators for noise-sensitive locations.
             </p>
@@ -181,8 +182,8 @@
 
           <article class="card reveal">
             <p class="card__index">DUCT</p>
-            <h3 class="card__title">Ductwork &amp; MEP accessories</h3>
-            <p class="card__body">
+            <h3 class="card__title" data-content-key="home.capabilities.card3_title">Ductwork &amp; MEP accessories</h3>
+            <p class="card__body" data-content-key="home.capabilities.card3_body">
               Spiral and rectangular ductwork, diffusers, dampers, VAV boxes and cable trays
               manufactured to AMCA, ASHRAE, UL and ISO standards.
             </p>
@@ -196,8 +197,8 @@
          ============================================================ -->
     <section class="section" id="products">
       <div class="container">
-        <p class="eyebrow">Products</p>
-        <h2 class="section__title">What we supply</h2>
+        <p class="eyebrow" data-content-key="home.products.eyebrow">Products</p>
+        <h2 class="section__title" data-content-key="home.products.title">What we supply</h2>
 
         <div class="cards cards--triple">
           <article class="product reveal">
@@ -238,7 +239,7 @@
         </div>
 
         <div class="products__more">
-          <a class="btn btn--primary" href="products.html">View full catalog &amp; brochures</a>
+          <a class="btn btn--primary" href="products.html" data-content-key="home.products.cta">View full catalog &amp; brochures</a>
         </div>
       </div>
     </section>
@@ -248,13 +249,13 @@
          ============================================================ -->
     <section class="section section--dark" id="values">
       <div class="container">
-        <p class="eyebrow eyebrow--light">Why Air 8</p>
-        <h2 class="section__title section__title--light">Built on how we work.</h2>
+        <p class="eyebrow eyebrow--light" data-content-key="home.values.eyebrow">Why Air 8</p>
+        <h2 class="section__title section__title--light" data-content-key="home.values.title">Built on how we work.</h2>
         <ul class="values">
-          <li class="reveal"><span>Quality</span>Durability, performance and efficiency in every product.</li>
-          <li class="reveal"><span>Commitment</span>Dependable solutions delivered on time.</li>
-          <li class="reveal"><span>Honesty</span>Transparency and integrity in every dealing.</li>
-          <li class="reveal"><span>Dedication</span>Going beyond to meet each client's needs.</li>
+          <li class="reveal"><span data-content-key="home.values.item1_label">Quality</span><span data-content-key="home.values.item1_body">Durability, performance and efficiency in every product.</span></li>
+          <li class="reveal"><span data-content-key="home.values.item2_label">Commitment</span><span data-content-key="home.values.item2_body">Dependable solutions delivered on time.</span></li>
+          <li class="reveal"><span data-content-key="home.values.item3_label">Honesty</span><span data-content-key="home.values.item3_body">Transparency and integrity in every dealing.</span></li>
+          <li class="reveal"><span data-content-key="home.values.item4_label">Dedication</span><span data-content-key="home.values.item4_body">Going beyond to meet each client's needs.</span></li>
         </ul>
       </div>
     </section>
@@ -265,17 +266,17 @@
     <section class="section" id="contact">
       <div class="container grid-2 grid-2--contact">
         <div>
-          <p class="eyebrow">Contact</p>
-          <h2 class="section__title">Tell us what you need.</h2>
-          <p class="prose">
+          <p class="eyebrow" data-content-key="home.contact.eyebrow">Contact</p>
+          <h2 class="section__title" data-content-key="home.contact.title">Tell us what you need.</h2>
+          <p class="prose" data-content-key="home.contact.intro">
             For details about services, pricing or availability, send us a message and our
             team will get back to you.
           </p>
 
           <ul class="contact-details">
-            <li><span>Address</span>8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila</li>
+            <li><span>Address</span><span data-content-key="home.contact.address">8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila</span></li>
             <li><span>Email</span><a href="mailto:sales@air8industries.com">sales@air8industries.com</a></li>
-            <li><span>Phone</span>(028) 828-2496 · (028) 782-6117</li>
+            <li><span>Phone</span><span data-content-key="home.contact.phone">(028) 828-2496 · (028) 782-6117</span></li>
           </ul>
         </div>
 
@@ -327,7 +328,7 @@
     <div class="container footer__inner">
       <div>
         <span class="brand__mark brand__mark--footer">AIR8</span>
-        <p class="footer__tag">Ventilation &amp; acoustic solutions.</p>
+        <p class="footer__tag" data-content-key="home.footer.tag">Ventilation &amp; acoustic solutions.</p>
       </div>
       <div class="footer__meta">
         <a href="mailto:sales@air8industries.com">sales@air8industries.com</a>
@@ -337,6 +338,9 @@
   </footer>
 
   <!-- Our JavaScript. Loaded last so the HTML above already exists when it runs. -->
+  <!-- content.js first: it fills in any admin-edited text (data-content-key)
+       and exposes window.contentReady, which hero-animation.js waits on. -->
+  <script src="content.js"></script>
   <!-- nav.js (shared) must load before main.js -->
   <script src="nav.js"></script>
   <script src="main.js"></script>

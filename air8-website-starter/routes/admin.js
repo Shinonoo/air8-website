@@ -380,4 +380,55 @@ router.put("/inquiries/:id/status", async (req, res) => {
   res.json({ ok: true });
 });
 
+// ---- Site content (editable text blocks) ----
+router.get("/content", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT content_key, group_name, label, value, default_value, sort_order
+       FROM site_content
+       ORDER BY sort_order, content_key`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("GET /api/admin/content failed:", err.message);
+    res.status(500).json({ error: "Could not load content." });
+  }
+});
+
+// Bulk save — only keys that already exist (were seeded) can be set,
+// so the client can't invent arbitrary content_keys.
+router.put("/content", async (req, res) => {
+  const { updates } = req.body || {};
+  if (!Array.isArray(updates)) {
+    return res.status(400).json({ error: "Expected an 'updates' array." });
+  }
+  try {
+    for (const u of updates) {
+      if (!u || typeof u.content_key !== "string") continue;
+      await pool.query(
+        "UPDATE site_content SET value = ? WHERE content_key = ?",
+        [u.value == null ? null : String(u.value), u.content_key]
+      );
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("PUT /api/admin/content failed:", err.message);
+    res.status(500).json({ error: "Could not save content." });
+  }
+});
+
+// Reset one block back to its seeded default.
+router.put("/content/:key/reset", async (req, res) => {
+  try {
+    await pool.query(
+      "UPDATE site_content SET value = default_value WHERE content_key = ?",
+      [req.params.key]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("Reset content failed:", err.message);
+    res.status(500).json({ error: "Could not reset content." });
+  }
+});
+
 module.exports = router;
