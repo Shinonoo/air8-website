@@ -435,7 +435,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .process {
   list-style: none; padding: 0; margin: 2.75rem 0 0;
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
-  counter-reset: step;
 }
 .process__step {
   background: var(--surface); border: 1px solid var(--line);
