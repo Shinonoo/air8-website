@@ -190,57 +190,28 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .nav__item > a::after {
   content: "▾"; display: inline-block; margin-left: 0.3em;
   font-size: 0.7em; color: var(--steel);
-  transition: transform 0.2s ease, color 0.2s ease;
 }
-.nav__item:hover > a::after,
-.nav__item:focus-within > a::after { transform: rotate(180deg); color: var(--navy); }
 .nav__dropdown {
-  /* Stays in the DOM (not display:none) so it can fade/slide instead of
-     snapping. It's absolutely positioned, so keeping it laid out costs no
-     space; pointer-events:none makes the hidden menu unclickable. */
-  display: flex;
-  flex-direction: column; gap: 2px;
+  display: none;
+  flex-direction: column;
   /* Flush against the link (no margin-top gap) — a gap here is a dead
      zone the mouse crosses with nothing under it, which drops :hover
      and closes the menu before you can reach it. padding-top gives the
      same visual breathing room without breaking the hover chain. */
   position: absolute; top: 100%; left: 0;
-  min-width: 246px; padding: 0.5rem;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-  box-shadow: 0 18px 38px rgba(15, 27, 45, 0.16);
+  min-width: 170px; padding: 0.65rem 0.4rem 0.4rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(15, 27, 45, 0.14);
   z-index: 20;
-  opacity: 0; visibility: hidden; transform: translateY(8px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-  pointer-events: none;
 }
 .nav__item:hover .nav__dropdown,
 .nav__item:focus-within .nav__dropdown {
-  opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto;
+  display: flex;
 }
 .nav__dropdown a {
-  display: flex; align-items: center; gap: 0.7rem;
-  padding: 0.6rem 0.7rem; border-radius: 9px; white-space: nowrap;
-  transition: background 0.15s ease, transform 0.15s ease;
+  padding: 0.55rem 0.7rem; border-radius: 7px; white-space: nowrap;
 }
-.nav__dropdown a:hover { background: var(--bg); transform: translateX(2px); }
-.nav__drop-dot {
-  flex: none; width: 9px; height: 9px; border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(18, 48, 95, 0.06);
-}
-.nav__drop-dot--elta { background: #2f7ed8; }
-.nav__drop-dot--abie { background: #e8a13a; }
-.nav__drop-dot--starduct { background: #3fb27f; }
-.nav__drop-text { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; }
-.nav__drop-name { font-weight: 600; color: var(--ink); font-size: 0.95rem; }
-.nav__dropdown a:hover .nav__drop-name { color: var(--navy); }
-.nav__drop-sub { font-size: 0.75rem; color: var(--steel); font-weight: 400; }
-.nav__drop-all {
-  margin-top: 3px; padding-top: 0.65rem !important;
-  border-top: 1px solid var(--line); border-radius: 0 0 6px 6px !important;
-  font-size: 0.85rem; font-weight: 600; color: var(--navy);
-  justify-content: center;
-}
-.nav__drop-all:hover { color: var(--amber); }
+.nav__dropdown a:hover { background: var(--bg); color: var(--navy); }
 
 /* Hamburger button — hidden on desktop, shown on mobile (or a narrow
    desktop window, which is still mouse-driven, so it needs a hover cue
@@ -502,22 +473,52 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   background: var(--surface); border: 1px solid var(--line);
   border-radius: 12px; padding: 0;
   overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.faq__item[open] { border-color: var(--navy); }
+.faq__item:hover { border-color: rgba(18, 48, 95, 0.35); }
+.faq__item[open] { border-color: var(--navy); box-shadow: 0 10px 24px rgba(15, 27, 45, 0.08); }
 .faq__q {
   cursor: pointer; list-style: none;
-  padding: 1.1rem 3rem 1.1rem 1.4rem;
+  padding: 1.1rem 3.6rem 1.1rem 1.4rem;
   font-weight: 600; color: var(--ink); position: relative;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 .faq__q::-webkit-details-marker { display: none; }
+.faq__q:hover { color: var(--navy); background: var(--bg); }
+/* Icon lives in its own circular badge (not a bare glyph) so the
+   open/close state reads clearly and matches the site's navy/amber
+   accent language used elsewhere (process steps, stat numbers). The
+   badge itself is the summary's ::after; the +/- bars are a nested
+   .faq__icon span so each bar can animate independently (a symmetric
+   cross can't turn into a minus sign just by rotating). */
 .faq__q::after {
-  content: "+"; position: absolute; right: 1.3rem; top: 50%;
-  transform: translateY(-50%); font-size: 1.35rem; color: var(--steel);
-  transition: transform 0.15s ease;
+  content: ""; position: absolute; right: 1.1rem; top: 50%;
+  transform: translateY(-50%); width: 1.7rem; height: 1.7rem;
+  border-radius: 50%; background: var(--bg); border: 1px solid var(--line);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
-.faq__item[open] .faq__q::after { content: "–"; color: var(--amber); }
-.faq__q:hover { color: var(--navy); }
-.faq__a { padding: 0 1.4rem 1.25rem; color: var(--steel); line-height: 1.65; }
+.faq__icon { position: absolute; right: 1.1rem; top: 50%; width: 1.7rem; height: 1.7rem; transform: translateY(-50%); z-index: 1; }
+.faq__icon::before, .faq__icon::after {
+  content: ""; position: absolute; left: 50%; top: 50%; background: var(--steel);
+  transition: transform 0.2s ease, background-color 0.15s ease;
+}
+.faq__icon::before { width: 0.7rem; height: 1.5px; transform: translate(-50%, -50%); }
+.faq__icon::after { width: 1.5px; height: 0.7rem; transform: translate(-50%, -50%); }
+.faq__item[open] .faq__q::after { background: var(--navy); border-color: var(--navy); }
+.faq__item[open] .faq__icon::before,
+.faq__item[open] .faq__icon::after { background: var(--amber); }
+.faq__item[open] .faq__icon::after { transform: translate(-50%, -50%) scaleY(0); }
+.faq__a {
+  padding: 0 1.4rem 1.25rem; color: var(--steel); line-height: 1.65;
+  animation: faqReveal 0.22s ease;
+}
+@keyframes faqReveal {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq__a { animation: none; }
+}
 
 /* Scroll-reveal starting state (JS removes this once element is visible) */
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
@@ -562,16 +563,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .nav__item { width: 100%; }
 
   /* No hover on touch — show the brand links inline under "Products"
-     instead of hiding them behind a hover state that can't be reached.
-     Reset the desktop fade/slide so the always-open list is fully shown. */
+     instead of hiding them behind a hover state that can't be reached. */
   .nav__dropdown {
-    display: flex; position: static; margin-top: 0; min-width: 0;
-    border: none; box-shadow: none; padding: 0.2rem 0 0.4rem 0.6rem;
-    opacity: 1; visibility: visible; transform: none; pointer-events: auto;
+    display: flex; position: static; margin-top: 0;
+    border: none; box-shadow: none; padding: 0 0 0.4rem 1rem;
   }
-  .nav__dropdown a { padding: 0.5rem 0; }
-  .nav__drop-sub { display: none; } /* keep the mobile list compact: brand names only */
-  .nav__drop-all { border-top: none; justify-content: flex-start; padding-top: 0.5rem !important; }
+  .nav__dropdown a { padding: 0.5rem 0; color: var(--steel); }
   /* .nav a's padding above wins over .nav__cta's own padding (same
      specificity, .nav a declared later) unless we out-specify it here —
      that was stripping the pill's side padding and letting the label
