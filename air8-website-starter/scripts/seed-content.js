@@ -116,6 +116,7 @@ const CONTENT = [
   ["home.contact.intro", "Contact", "Intro paragraph", "Tell us what you need — our team reviews every enquiry and gets back to you with pricing, availability and honest advice."],
   ["home.contact.address", "Contact", "Address", "8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila"],
   ["home.contact.phone", "Contact", "Phone", "(028) 828-2496 · (028) 782-6117"],
+  ["home.contact.hours", "Contact", "Business hours", "Mon – Fri · 8:00 AM – 5:00 PM"],
 
   // ---- Footer ----
   ["home.footer.tag", "Footer", "Tagline", "Ventilation, acoustic & ductwork solutions."],
