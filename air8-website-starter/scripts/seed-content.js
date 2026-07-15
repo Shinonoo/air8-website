@@ -23,7 +23,7 @@ const CONTENT = [
   // ---- Hero ----
   ["home.hero.eyebrow", "Hero", "Eyebrow (small label above headline)", "Ventilation · Acoustics · Ductwork"],
   ["home.hero.title", "Hero", "Headline (put each line on its own line)", "We move air.\nWe control sound."],
-  ["home.hero.lead", "Hero", "Intro paragraph", "Air 8 Industries supplies fans, blowers, acoustic systems and ductwork for homes, buildings and industry across the Philippines — with technical support from enquiry to delivery."],
+  ["home.hero.lead", "Hero", "Intro paragraph", "AIR8 Industries supplies fans, blowers, acoustic systems and ductwork for homes, buildings and industry across the Philippines — with technical support from enquiry to delivery."],
   ["home.hero.cta_primary", "Hero", "Primary button", "Get a quote"],
   ["home.hero.cta_secondary", "Hero", "Secondary button", "Browse products"],
 
@@ -74,16 +74,16 @@ const CONTENT = [
   ["home.products.cta", "Products section", "Button", "View full catalog & brochures"],
 
   // ---- Values ----
-  ["home.values.eyebrow", "Why Air 8", "Eyebrow", "Why Air 8"],
-  ["home.values.title", "Why Air 8", "Heading", "Built on how we work."],
-  ["home.values.item1_label", "Why Air 8", "Value 1 — label", "Quality"],
-  ["home.values.item1_body", "Why Air 8", "Value 1 — text", "Durability, performance and efficiency in every product."],
-  ["home.values.item2_label", "Why Air 8", "Value 2 — label", "Commitment"],
-  ["home.values.item2_body", "Why Air 8", "Value 2 — text", "Dependable solutions delivered on time."],
-  ["home.values.item3_label", "Why Air 8", "Value 3 — label", "Honesty"],
-  ["home.values.item3_body", "Why Air 8", "Value 3 — text", "Transparency and integrity in every dealing."],
-  ["home.values.item4_label", "Why Air 8", "Value 4 — label", "Dedication"],
-  ["home.values.item4_body", "Why Air 8", "Value 4 — text", "Going beyond to meet each client's needs."],
+  ["home.values.eyebrow", "Why AIR8", "Eyebrow", "Why AIR8"],
+  ["home.values.title", "Why AIR8", "Heading", "Built on how we work."],
+  ["home.values.item1_label", "Why AIR8", "Value 1 — label", "Quality"],
+  ["home.values.item1_body", "Why AIR8", "Value 1 — text", "Durability, performance and efficiency in every product."],
+  ["home.values.item2_label", "Why AIR8", "Value 2 — label", "Commitment"],
+  ["home.values.item2_body", "Why AIR8", "Value 2 — text", "Dependable solutions delivered on time."],
+  ["home.values.item3_label", "Why AIR8", "Value 3 — label", "Honesty"],
+  ["home.values.item3_body", "Why AIR8", "Value 3 — text", "Transparency and integrity in every dealing."],
+  ["home.values.item4_label", "Why AIR8", "Value 4 — label", "Dedication"],
+  ["home.values.item4_body", "Why AIR8", "Value 4 — text", "Going beyond to meet each client's needs."],
 
   // ---- How it works ----
   ["home.process.eyebrow", "How it works", "Eyebrow", "How it works"],
@@ -115,7 +115,7 @@ const CONTENT = [
   ["home.contact.title", "Contact", "Heading", "Request a quotation."],
   ["home.contact.intro", "Contact", "Intro paragraph", "Tell us what you need — our team reviews every enquiry and gets back to you with pricing, availability and honest advice."],
   ["home.contact.address", "Contact", "Address", "8A Block-4 Lot-4C Filipinas Ave., UPS5 Sucat, Paranaque, Metro Manila"],
-  ["home.contact.phone", "Contact", "Phone", "(028) 828-2496 · (028) 782-6117 · 0933 812 4607"],
+  ["home.contact.phone", "Contact", "Phone", "(028) 828-2496\n(028) 782-6117\n0933 812 4607"],
   ["home.contact.hours", "Contact", "Business hours", "Mon – Fri · 8:00 AM – 5:00 PM"],
 
   // ---- Footer ----

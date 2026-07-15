@@ -262,12 +262,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   background: var(--surface); 
 }
 
+/* Label sits ABOVE the logo row (not inline beside it). Inline, the
+   "Authorized distributor of" label ate ~190px of the 1120px container,
+   which left too little room for three brand blocks — they were being
+   force-shrunk into one row and their nowrap text overflowed onto the
+   next brand's logo. Stacking the label on top hands the full width to
+   the three partners so they fit in one clean row. */
 .partners__inner {
   padding: 2rem 1.5rem;
-  display: flex; align-items: center;
-  justify-content: center; /* center the label + logo strip as ONE group */
-  gap: 2.5rem;
-  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
 }
 
 .partners__label {
@@ -275,59 +281,56 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   font-size: 0.72rem; letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--steel);
-  flex: 0 0 auto;
+  text-align: center;
 }
 
-/* This was the missing piece: without it, .partner (a column flex item)
-   falls back to block display here and the two partners stack one on
-   top of the other instead of sitting in a single row/strip.
-   flex-wrap stays "nowrap" so Elta Fans / Abie Tiger / Starduct always
-   sit in ONE row — the responsive rules below shrink them to fit
-   instead of letting them wrap to a second line.
-   flex stays 0 0 auto (not 1 1 auto/space-between): stretching the
-   logos to fill the full container width, combined with each brand
-   block being a different natural width, is what made the row read as
-   left-heavy — Elta's wider "Malaysia · Fans & Blowers" block ate more
-   of the stretch than Starduct's shorter one. A natural-width group,
-   centered by .partners__inner above, stays visually balanced. */
 .partners__logos {
   display: flex;
   align-items: center;
-  gap: 2.5rem;
-  flex-wrap: nowrap;
-  flex: 0 1 auto; /* don't stretch to fill (grow:0), but DO shrink to fit (shrink:1) */
-  min-width: 0;
+  justify-content: center;
+  /* wrap (not nowrap) so a too-narrow window wraps a brand to the next
+     line cleanly instead of overlapping the neighbour. */
+  flex-wrap: wrap;
+  gap: 1.25rem 2.25rem; /* row-gap  column-gap */
+}
+
+/* Each brand is a compact lockup: logo on the left, spanning two rows,
+   with the name stacked over its origin line on the right. This halves
+   each brand's width vs. the old logo-name-origin single row, which is
+   what lets all three sit side by side without shrinking/overlap. */
+.partner {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 1rem;
+  align-items: center;
 }
 
 .partner__logo {
+  grid-column: 1;
+  grid-row: 1 / span 2;
   display: block;
-  order: -1;
-  max-width: 140px;
-  max-height: 88px;
+  max-width: 116px;
+  max-height: 68px;
   width: auto;
   height: auto;
-  margin-top: 0;
   object-fit: contain;
 }
 
-.partner {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1.1rem;
-  min-width: 0; /* lets flex actually shrink this item instead of forcing the row to wrap */
-}
-
 .partner__name {
+  grid-column: 2;
+  grid-row: 1;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: var(--navy);
   white-space: nowrap;
+  line-height: 1.15;
 }
 
 .partner__origin {
-  font-size: 0.8rem;
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 0.78rem;
   color: var(--steel);
   white-space: nowrap;
 }
@@ -369,6 +372,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
    stays normal body text rather than inheriting the tiny uppercase label style. */
 .contact-details span:first-child { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); }
 .contact-details a { color: var(--navy); }
+/* Phone holds several numbers — render them one per line (the content
+   value carries the line breaks) instead of one cluttered middot-run. */
+.contact-details__stack { white-space: pre-line; }
 
 /* FORM */
 .form { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 2rem; }

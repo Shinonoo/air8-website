@@ -144,7 +144,7 @@ app.post("/api/contact", async (req, res) => {
 
       // (a) Notify your sales inbox — this is the lead you wanted to capture.
       await transporter.sendMail({
-        from: `"Air 8 Website" <${process.env.SMTP_USER}>`,
+        from: `"AIR8 Website" <${process.env.SMTP_USER}>`,
         to: process.env.CONTACT_TO || "sales@air8industries.com",
         replyTo: email, // so you can reply straight to the visitor
         subject: `New enquiry from ${name}${product ? " — " + product : ""}`,
@@ -160,16 +160,16 @@ app.post("/api/contact", async (req, res) => {
 
       // (b) Auto-reply to the visitor so they know it went through.
       await transporter.sendMail({
-        from: `"Air 8 Industries" <${process.env.SMTP_USER}>`,
+        from: `"AIR8 Industries" <${process.env.SMTP_USER}>`,
         to: email,
-        subject: "Thanks for your enquiry — Air 8 Industries",
+        subject: "Thanks for your enquiry — AIR8 Industries",
         text:
           `Hi ${name},\n\n` +
-          `Thanks for reaching out to Air 8 Industries` +
+          `Thanks for reaching out to AIR8 Industries` +
           (product ? ` about ${product}` : "") +
           `. We've received your message and our team will get back to you shortly` +
           (product ? `, including the catalogue you requested.` : `.`) +
-          `\n\n— Air 8 Industries Inc.\nsales@air8industries.com`,
+          `\n\n— AIR8 Industries Inc.\nsales@air8industries.com`,
       });
 
       if (inquiryId) {
