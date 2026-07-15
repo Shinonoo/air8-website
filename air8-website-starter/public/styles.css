@@ -318,16 +318,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   min-width: 0; /* lets flex actually shrink this item instead of forcing the row to wrap */
 }
 
-.partner__name { 
-  font-family: var(--font-display); 
-  font-weight: 700; 
-  font-size: 1.3rem; 
-  color: var(--navy); 
+.partner__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--navy);
+  white-space: nowrap;
 }
 
-.partner__origin { 
-  font-size: 0.8rem; 
-  color: var(--steel); 
+.partner__origin {
+  font-size: 0.8rem;
+  color: var(--steel);
+  white-space: nowrap;
 }
 
 
