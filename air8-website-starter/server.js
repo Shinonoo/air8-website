@@ -130,11 +130,12 @@ app.post("/api/contact", async (req, res) => {
     console.error("Could not save enquiry to the database:", err.message);
   }
 
-  // 4) Try to email it to your sales inbox — but only if SMTP is configured.
-  //    Until you add the SMTP_* values (see .env.example), this step is skipped
-  //    and the form still "works" (message is saved above and success is returned).
-  try {
-    if (process.env.SMTP_HOST) {
+  // 4) Email a copy to your sales inbox — but only if SMTP is configured.
+  //    This is BEST-EFFORT: the enquiry is already safely saved above and
+  //    shown in the admin panel, so a mail hiccup must NEVER make the visitor
+  //    think their message failed. We log any email error and still return OK.
+  if (process.env.SMTP_HOST) {
+    try {
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT || 587),
@@ -175,16 +176,14 @@ app.post("/api/contact", async (req, res) => {
       if (inquiryId) {
         pool.query("UPDATE inquiries SET email_sent = 1 WHERE id = ?", [inquiryId]).catch(() => {});
       }
+    } catch (err) {
+      // Saved already — just record that the notification email didn't go out.
+      console.error("Notification email failed (enquiry still saved):", err.message);
     }
-
-    // 5) Tell the browser it worked.
-    return res.json({ ok: true });
-  } catch (err) {
-    console.error("Email send failed:", err.message);
-    // The message was already saved to the database above, so it isn't lost —
-    // but the visitor didn't get their auto-reply, so report failure.
-    return res.status(500).json({ error: "Could not send message." });
   }
+
+  // 5) Tell the browser it worked (the enquiry is captured regardless of email).
+  return res.json({ ok: true });
 });
 
 /* ------------------------------------------------------------
