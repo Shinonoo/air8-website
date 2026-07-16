@@ -302,11 +302,21 @@
     <!-- MESSAGES TAB -->
     <section id="messagesTab" class="admin-hidden">
       <div class="admin-panel">
-        <h2>Inquiries</h2>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+          <h2 style="margin:0;">Inquiries</h2>
+          <button type="button" id="deleteInquiriesBtn" class="btn btn--danger" disabled>
+            Delete selected
+          </button>
+        </div>
         <div style="overflow-x:auto;">
           <table class="admin-table">
             <thead>
-              <tr><th>Date</th><th>From</th><th>Regarding</th><th>Message</th><th>Email</th><th>Status</th></tr>
+              <tr>
+                <th style="width:2.5rem;">
+                  <input type="checkbox" id="inquiriesSelectAll" aria-label="Select all inquiries" />
+                </th>
+                <th>Date</th><th>From</th><th>Regarding</th><th>Message</th><th>Email</th><th>Status</th>
+              </tr>
             </thead>
             <tbody id="inquiriesTableBody"></tbody>
           </table>

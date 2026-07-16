@@ -447,29 +447,40 @@ async function loadInquiries() {
   document.getElementById("unreadBadge").textContent = unread ? `(${unread})` : "";
 
   const body = document.getElementById("inquiriesTableBody");
+  // Every field below came from a public form, so it is untrusted and must be
+  // escaped before it touches innerHTML — otherwise a visitor could put markup
+  // (or a <script>) in the message box and have it run here in the admin panel.
   body.innerHTML = inquiries
     .map((i) => {
       const date = new Date(i.created_at).toLocaleString();
       const statusOptions = Object.keys(STATUS_LABELS)
         .map((s) => `<option value="${s}" ${i.status === s ? "selected" : ""}>${STATUS_LABELS[s]}</option>`)
         .join("");
+      const contact = [i.email, i.phone, i.company].filter(Boolean).map(escapeHtml).join(" · ");
       return `
         <tr>
-          <td>${date}</td>
+          <td><input type="checkbox" class="inquiry-check" data-id="${Number(i.id)}" aria-label="Select inquiry from ${escapeHtml(i.name)}" /></td>
+          <td>${escapeHtml(date)}</td>
           <td>
-            ${i.name}<br>
-            <span style="color:var(--steel);font-size:0.8rem;">
-              ${i.email}${i.phone ? " · " + i.phone : ""}${i.company ? " · " + i.company : ""}
-            </span>
+            ${escapeHtml(i.name)}<br>
+            <span style="color:var(--steel);font-size:0.8rem;">${contact}</span>
           </td>
-          <td>${i.product_name || i.service_type || "—"}</td>
-          <td style="max-width:280px;">${i.message || "<em>(catalogue request)</em>"}</td>
+          <td>${escapeHtml(i.product_name || i.service_type || "—")}</td>
+          <td style="max-width:280px;">${i.message ? escapeHtml(i.message) : "<em>(catalogue request)</em>"}</td>
           <td>${i.email_sent ? '<span class="pill pill--ok">Sent</span>' : '<span class="pill">Not sent</span>'}</td>
-          <td><select class="inquiry-status" data-id="${i.id}">${statusOptions}</select></td>
+          <td><select class="inquiry-status" data-id="${Number(i.id)}">${statusOptions}</select></td>
         </tr>
       `;
     })
     .join("");
+
+  // Re-rendering replaced every row, so the select-all box and the delete
+  // button's count both need to fall back to "nothing selected".
+  document.getElementById("inquiriesSelectAll").checked = false;
+  body.querySelectorAll(".inquiry-check").forEach((box) => {
+    box.addEventListener("change", refreshInquirySelection);
+  });
+  refreshInquirySelection();
 
   body.querySelectorAll(".inquiry-status").forEach((select) => {
     select.addEventListener("change", async function () {
@@ -483,6 +494,47 @@ async function loadInquiries() {
     });
   });
 }
+
+function selectedInquiryIds() {
+  return Array.from(document.querySelectorAll(".inquiry-check:checked"))
+    .map((box) => Number(box.dataset.id));
+}
+
+// Keeps the delete button's label/enabled state in step with the checkboxes.
+function refreshInquirySelection() {
+  const n = selectedInquiryIds().length;
+  const btn = document.getElementById("deleteInquiriesBtn");
+  btn.disabled = n === 0;
+  btn.textContent = n ? `Delete selected (${n})` : "Delete selected";
+}
+
+document.getElementById("inquiriesSelectAll").addEventListener("change", function () {
+  document.querySelectorAll(".inquiry-check").forEach((box) => { box.checked = this.checked; });
+  refreshInquirySelection();
+});
+
+document.getElementById("deleteInquiriesBtn").addEventListener("click", async function () {
+  const ids = selectedInquiryIds();
+  if (!ids.length) return;
+  // Deleting an enquiry is permanent and these are real sales leads, so make
+  // the count explicit rather than a vague "are you sure?".
+  const msg = ids.length === 1
+    ? "Delete this enquiry? This cannot be undone."
+    : `Delete ${ids.length} enquiries? This cannot be undone.`;
+  if (!confirm(msg)) return;
+
+  this.disabled = true;
+  try {
+    await api("/api/admin/inquiries/bulk-delete", {
+      method: "POST",
+      body: JSON.stringify({ ids }),
+    });
+    await loadInquiries();
+  } catch (err) {
+    alert(err.message || "Could not delete the selected enquiries.");
+    this.disabled = false;
+  }
+});
 
 /* ---- Page text (site content) ---- */
 function escapeHtml(s) {

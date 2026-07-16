@@ -373,6 +373,26 @@ router.put("/inquiries/:id/read", async (req, res) => {
   res.json({ ok: true });
 });
 
+// Delete one or many inquiries. Takes an array so clearing out a spam run (or
+// a batch of test submissions) is one request and one confirmation, not thirty.
+// There is no soft-delete: an inquiry the admin removes is meant to be gone.
+router.post("/inquiries/bulk-delete", async (req, res) => {
+  const ids = (req.body && req.body.ids) || [];
+  // Coerce to numbers and drop anything that isn't one — these land in a SQL
+  // IN (...) list, so nothing but integers may reach the query.
+  const clean = ids.map(Number).filter((n) => Number.isInteger(n) && n > 0);
+  if (!clean.length) {
+    return res.status(400).json({ error: "No valid inquiry ids given." });
+  }
+  try {
+    const [result] = await pool.query("DELETE FROM inquiries WHERE id IN (?)", [clean]);
+    res.json({ ok: true, deleted: result.affectedRows });
+  } catch (err) {
+    console.error("Bulk delete inquiries failed:", err.message);
+    res.status(500).json({ error: "Could not delete the selected inquiries." });
+  }
+});
+
 const VALID_STATUSES = ["new", "contacted", "quoted", "closed"];
 router.put("/inquiries/:id/status", async (req, res) => {
   const { status } = req.body || {};
