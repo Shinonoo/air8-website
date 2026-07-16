@@ -14,8 +14,8 @@ require("dotenv").config();                     // load .env into process.env (S
 const express = require("express");
 const path = require("path");
 const compression = require("compression");
-const nodemailer = require("nodemailer");
 const session = require("express-session");
+const { sendMail } = require("./utils/mailer");
 const pool = require("./db");
 const productsRouter = require("./routes/products");
 const contentRouter = require("./routes/content");
@@ -137,51 +137,37 @@ app.post("/api/contact", async (req, res) => {
   //    them wait the full 120s SMTP connection timeout — never again.)
   res.json({ ok: true });
 
-  // 5) Now email a copy to your sales inbox — only if SMTP is configured.
-  //    Strictly BEST-EFFORT and strictly off the visitor's path: the enquiry is
-  //    already in the database and visible in the admin panel's Messages tab, so
-  //    mail is a convenience, not the system of record. Errors are logged only.
-  if (process.env.SMTP_HOST) {
+  // 5) Now email a copy to your sales inbox. Strictly BEST-EFFORT and strictly
+  //    off the visitor's path: the enquiry is already in the database and
+  //    visible in the admin panel's Messages tab, so mail is a convenience,
+  //    not the system of record. Errors are logged only.
+  try {
+    // (a) Notify your sales inbox — this is the lead you wanted to capture.
+    const sent = await sendMail({
+      fromName: "AIR8 Website",
+      to: process.env.CONTACT_TO || "sales@air8industries.com",
+      replyTo: email, // so you can reply straight to the visitor
+      subject: `New enquiry from ${name}${product ? " — " + product : ""}`,
+      text:
+        `Name: ${name}\n` +
+        `Email: ${email}\n` +
+        `Phone: ${phone || "-"}\n` +
+        `Company: ${company || "-"}\n` +
+        `Service: ${service || "-"}\n` +
+        `Product: ${product || "-"}\n\n` +
+        `Message:\n${message || "(catalogue request)"}`,
+    });
+
+    // Nothing configured (e.g. a fresh local checkout) — not an error.
+    if (!sent) return;
+
+    // (b) Auto-reply to the visitor so they know it went through. Sent second
+    //     and deliberately not fatal to (a): the lead reaching sales matters
+    //     more than the courtesy reply, so a failure here must not stop us
+    //     marking the enquiry as delivered.
     try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT || 587),
-        secure: Number(process.env.SMTP_PORT) === 465, // true for port 465
-        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-        // Fail fast instead of hanging for nodemailer's 2-minute default. Nobody
-        // is waiting on this, but a stuck socket still pins a connection and
-        // delays the log line that tells us mail is broken.
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 20000,
-      });
-
-      // Who the mail appears to come from. This is deliberately NOT SMTP_USER:
-      // with a relay (Brevo, SendGrid...) the login is an account identifier,
-      // not a mailbox, so signing in and addressing the mail are separate
-      // concerns. Falls back to SMTP_USER for a plain mailbox setup, where the
-      // two genuinely are the same address.
-      const mailFrom = process.env.MAIL_FROM || process.env.SMTP_USER;
-
-      // (a) Notify your sales inbox — this is the lead you wanted to capture.
-      await transporter.sendMail({
-        from: `"AIR8 Website" <${mailFrom}>`,
-        to: process.env.CONTACT_TO || "sales@air8industries.com",
-        replyTo: email, // so you can reply straight to the visitor
-        subject: `New enquiry from ${name}${product ? " — " + product : ""}`,
-        text:
-          `Name: ${name}\n` +
-          `Email: ${email}\n` +
-          `Phone: ${phone || "-"}\n` +
-          `Company: ${company || "-"}\n` +
-          `Service: ${service || "-"}\n` +
-          `Product: ${product || "-"}\n\n` +
-          `Message:\n${message || "(catalogue request)"}`,
-      });
-
-      // (b) Auto-reply to the visitor so they know it went through.
-      await transporter.sendMail({
-        from: `"AIR8 Industries" <${mailFrom}>`,
+      await sendMail({
+        fromName: "AIR8 Industries",
         to: email,
         subject: "Thanks for your enquiry — AIR8 Industries",
         text:
@@ -192,15 +178,17 @@ app.post("/api/contact", async (req, res) => {
           (product ? `, including the catalogue you requested.` : `.`) +
           `\n\n— AIR8 Industries Inc.\nsales@air8industries.com`,
       });
-
-      if (inquiryId) {
-        pool.query("UPDATE inquiries SET email_sent = 1 WHERE id = ?", [inquiryId]).catch(() => {});
-      }
     } catch (err) {
-      // Saved already — just record that the notification email didn't go out.
-      // The visitor has long since been told "ok"; this line is for you.
-      console.error("Notification email failed (enquiry still saved):", err.message);
+      console.error("Auto-reply to visitor failed (lead was still emailed):", err.message);
     }
+
+    if (inquiryId) {
+      pool.query("UPDATE inquiries SET email_sent = 1 WHERE id = ?", [inquiryId]).catch(() => {});
+    }
+  } catch (err) {
+    // Saved already — just record that the notification email didn't go out.
+    // The visitor has long since been told "ok"; this line is for you.
+    console.error("Notification email failed (enquiry still saved):", err.message);
   }
 });
 
