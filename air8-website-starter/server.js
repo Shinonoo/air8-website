@@ -156,9 +156,16 @@ app.post("/api/contact", async (req, res) => {
         socketTimeout: 20000,
       });
 
+      // Who the mail appears to come from. This is deliberately NOT SMTP_USER:
+      // with a relay (Brevo, SendGrid...) the login is an account identifier,
+      // not a mailbox, so signing in and addressing the mail are separate
+      // concerns. Falls back to SMTP_USER for a plain mailbox setup, where the
+      // two genuinely are the same address.
+      const mailFrom = process.env.MAIL_FROM || process.env.SMTP_USER;
+
       // (a) Notify your sales inbox — this is the lead you wanted to capture.
       await transporter.sendMail({
-        from: `"AIR8 Website" <${process.env.SMTP_USER}>`,
+        from: `"AIR8 Website" <${mailFrom}>`,
         to: process.env.CONTACT_TO || "sales@air8industries.com",
         replyTo: email, // so you can reply straight to the visitor
         subject: `New enquiry from ${name}${product ? " — " + product : ""}`,
@@ -174,7 +181,7 @@ app.post("/api/contact", async (req, res) => {
 
       // (b) Auto-reply to the visitor so they know it went through.
       await transporter.sendMail({
-        from: `"AIR8 Industries" <${process.env.SMTP_USER}>`,
+        from: `"AIR8 Industries" <${mailFrom}>`,
         to: email,
         subject: "Thanks for your enquiry — AIR8 Industries",
         text:
