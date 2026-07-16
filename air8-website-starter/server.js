@@ -130,10 +130,17 @@ app.post("/api/contact", async (req, res) => {
     console.error("Could not save enquiry to the database:", err.message);
   }
 
-  // 4) Email a copy to your sales inbox — but only if SMTP is configured.
-  //    This is BEST-EFFORT: the enquiry is already safely saved above and
-  //    shown in the admin panel, so a mail hiccup must NEVER make the visitor
-  //    think their message failed. We log any email error and still return OK.
+  // 4) Tell the browser it worked. The enquiry is saved; that's the promise we
+  //    made to the visitor, and it's already kept. Everything below this line
+  //    happens AFTER the response is sent, so a slow or unreachable mail server
+  //    can never make the visitor sit there watching a spinner. (It once made
+  //    them wait the full 120s SMTP connection timeout — never again.)
+  res.json({ ok: true });
+
+  // 5) Now email a copy to your sales inbox — only if SMTP is configured.
+  //    Strictly BEST-EFFORT and strictly off the visitor's path: the enquiry is
+  //    already in the database and visible in the admin panel's Messages tab, so
+  //    mail is a convenience, not the system of record. Errors are logged only.
   if (process.env.SMTP_HOST) {
     try {
       const transporter = nodemailer.createTransport({
@@ -141,6 +148,12 @@ app.post("/api/contact", async (req, res) => {
         port: Number(process.env.SMTP_PORT || 587),
         secure: Number(process.env.SMTP_PORT) === 465, // true for port 465
         auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        // Fail fast instead of hanging for nodemailer's 2-minute default. Nobody
+        // is waiting on this, but a stuck socket still pins a connection and
+        // delays the log line that tells us mail is broken.
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 20000,
       });
 
       // (a) Notify your sales inbox — this is the lead you wanted to capture.
@@ -178,12 +191,10 @@ app.post("/api/contact", async (req, res) => {
       }
     } catch (err) {
       // Saved already — just record that the notification email didn't go out.
+      // The visitor has long since been told "ok"; this line is for you.
       console.error("Notification email failed (enquiry still saved):", err.message);
     }
   }
-
-  // 5) Tell the browser it worked (the enquiry is captured regardless of email).
-  return res.json({ ok: true });
 });
 
 /* ------------------------------------------------------------
