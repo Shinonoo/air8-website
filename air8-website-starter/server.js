@@ -16,6 +16,7 @@ const path = require("path");
 const compression = require("compression");
 const session = require("express-session");
 const { sendMail } = require("./utils/mailer");
+const { fixBrochurePaths } = require("./scripts/fix-brochure-paths");
 const pool = require("./db");
 const productsRouter = require("./routes/products");
 const contentRouter = require("./routes/content");
@@ -220,4 +221,12 @@ app.get("*", (req, res) => {
 // Start listening for visitors.
 app.listen(PORT, () => {
   console.log(`Air 8 site running at http://localhost:${PORT}`);
+
+  // Repair the brochure links left broken by the original seed data. This is
+  // idempotent and self-disabling (it stops matching rows once applied), so it
+  // costs nothing on later boots. Deliberately after listen() and fire-and-
+  // forget: the site must come up whether or not this succeeds.
+  fixBrochurePaths()
+    .then((n) => { if (n) console.log(`Brochure paths repaired: ${n} product(s) updated.`); })
+    .catch((err) => console.error("Brochure path repair skipped:", err.message));
 });
