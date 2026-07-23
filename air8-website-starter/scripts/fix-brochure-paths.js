@@ -165,6 +165,20 @@ const IMAGES_ABIE = {
   123: "duct_silencer.webp", // was ds_duct_silencer.png, which never existed
 };
 
+// Starduct's seven entries are whole product lines rather than single
+// parts, so each points at the catalogue for that line. Diffusers and
+// volume control dampers have no standalone catalogue, so they use the
+// general one — its product diagram covers both explicitly.
+const BROCHURES_STARDUCT = {
+  146: "ductwork_system.pdf",           // Spiral & Rectangular Ductwork
+  147: "starduct_series_products.pdf",  // Diffusers & Air Outlets
+  148: "fire_dampers.pdf",              // Fire & Smoke Dampers
+  149: "starduct_series_products.pdf",  // Volume Control Dampers (VCD)
+  150: "vav_box.pdf",                   // VAV Boxes
+  151: "duct_silencers.pdf",            // Duct Silencers
+  152: "cable_tray.pdf",                // Cable Trays & Duct Supports
+};
+
 // One idempotent UPDATE per row. The "AND NOT (col <=> ?)" guard is a
 // null-safe comparison, so a row stops matching once it already holds the
 // right value — steady-state deploys do cheap no-op updates and nothing more.
@@ -185,13 +199,20 @@ async function fixBrochurePaths() {
   const brochures = await applyMap("brochure_url", BROCHURES, "brochures/elta_fans/");
   const images = await applyMap("primary_image_url", IMAGES, "images/elta_fans/");
   const abie = await applyMap("primary_image_url", IMAGES_ABIE, "images/abie_tiger/");
-  return brochures + images + abie;
+  const starduct = await applyMap("brochure_url", BROCHURES_STARDUCT, "brochures/starduct/");
+  return brochures + images + abie + starduct;
 }
 
 // The maps are exported so a test can assert every mapped file actually
 // exists on disk — a typo here is otherwise invisible until a customer
 // clicks Download and gets a 404.
-module.exports = { fixBrochurePaths, BROCHURES, IMAGES, IMAGES_ABIE };
+module.exports = {
+  fixBrochurePaths,
+  BROCHURES,
+  IMAGES,
+  IMAGES_ABIE,
+  BROCHURES_STARDUCT,
+};
 
 // Allow running it directly too: `node scripts/fix-brochure-paths.js`
 if (require.main === module) {

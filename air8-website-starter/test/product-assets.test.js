@@ -24,6 +24,7 @@ const {
   BROCHURES,
   IMAGES,
   IMAGES_ABIE,
+  BROCHURES_STARDUCT,
 } = require("../scripts/fix-brochure-paths");
 
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
@@ -34,6 +35,7 @@ const MAPS = [
   ["BROCHURES", BROCHURES, "brochures/elta_fans"],
   ["IMAGES", IMAGES, "images/elta_fans"],
   ["IMAGES_ABIE", IMAGES_ABIE, "images/abie_tiger"],
+  ["BROCHURES_STARDUCT", BROCHURES_STARDUCT, "brochures/starduct"],
 ];
 
 for (const [label, map, dir] of MAPS) {
