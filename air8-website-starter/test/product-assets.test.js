@@ -57,6 +57,61 @@ for (const [label, map, dir] of MAPS) {
   });
 }
 
+// The Starduct range is defined as data rather than as an id -> file map,
+// so it needs its own checks: same "does the file exist" guarantee, plus
+// the uniqueness the seeder depends on (it upserts by slug derived from
+// name + code, so a duplicate pair would silently collapse two products
+// into one row).
+const { PRODUCTS, CATALOGUE } = require("../scripts/starduct-products");
+
+test("Starduct: every product photo exists", () => {
+  const missing = PRODUCTS.filter(
+    (p) => !fs.existsSync(path.join(PUBLIC_DIR, "images/starduct", p.image))
+  ).map((p) => `${p.name} -> ${p.image}`);
+  assert.deepStrictEqual(missing, [], `missing photo(s):\n  ${missing.join("\n  ")}`);
+});
+
+test("Starduct: every category maps to a catalogue that exists", () => {
+  const bad = [...new Set(PRODUCTS.map((p) => p.category))]
+    .map((c) => [c, CATALOGUE[c]])
+    .filter(([, file]) => !file || !fs.existsSync(path.join(PUBLIC_DIR, "brochures/starduct", file)))
+    .map(([c, file]) => `${c} -> ${file || "(none)"}`);
+  assert.deepStrictEqual(bad, [], `unusable catalogue mapping(s): ${bad.join(", ")}`);
+});
+
+test("Starduct: name + code pairs are unique", () => {
+  const seen = new Set();
+  const dupes = [];
+  for (const p of PRODUCTS) {
+    const key = `${p.name}|${p.code}`;
+    if (seen.has(key)) dupes.push(key);
+    seen.add(key);
+  }
+  assert.deepStrictEqual(dupes, [], `duplicate name+code: ${dupes.join(", ")}`);
+});
+
+// The seeder writes straight into fixed-width columns. MySQL in non-strict
+// mode truncates silently, so an over-long code or spec would reach the site
+// as mangled text rather than as an error anyone would notice.
+test("Starduct: no field exceeds its database column", () => {
+  const LIMITS = { name: 255, code: 80, spec_label: 120, spec_value: 255 };
+  const over = [];
+  for (const p of PRODUCTS) {
+    if (p.name.length > LIMITS.name) over.push(`name: ${p.name}`);
+    if (p.code.length > LIMITS.code) over.push(`code: ${p.code}`);
+    for (const s of p.specs || []) {
+      if (s.label.length > LIMITS.spec_label) over.push(`spec label: ${s.label}`);
+      if (s.value.length > LIMITS.spec_value) over.push(`spec value: ${s.value}`);
+    }
+  }
+  assert.deepStrictEqual(over, [], `too long for its column:\n  ${over.join("\n  ")}`);
+});
+
+test("Starduct: every product has a blurb and at least one spec", () => {
+  const thin = PRODUCTS.filter((p) => !p.blurb || !p.specs || !p.specs.length).map((p) => p.name);
+  assert.deepStrictEqual(thin, [], `incomplete product(s): ${thin.join(", ")}`);
+});
+
 // A product can only carry one photo, so the same id appearing in both
 // image maps would mean two writes racing to set primary_image_url — the
 // winner decided by map order rather than by intent.

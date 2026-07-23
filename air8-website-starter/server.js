@@ -17,6 +17,7 @@ const compression = require("compression");
 const session = require("express-session");
 const { sendMail } = require("./utils/mailer");
 const { fixBrochurePaths } = require("./scripts/fix-brochure-paths");
+const { seedStarductProducts } = require("./scripts/seed-starduct-products");
 const pool = require("./db");
 const productsRouter = require("./routes/products");
 const contentRouter = require("./routes/content");
@@ -229,4 +230,13 @@ app.listen(PORT, () => {
   fixBrochurePaths()
     .then((n) => { if (n) console.log(`Brochure paths repaired: ${n} product(s) updated.`); })
     .catch((err) => console.error("Brochure path repair skipped:", err.message));
+
+  // Load the Starduct range. Same reasoning and same guarantees as the
+  // repair above: idempotent, additive, and fire-and-forget so a database
+  // hiccup can never stop the site coming up.
+  seedStarductProducts()
+    .then(({ created, updated }) => {
+      if (created) console.log(`Starduct products seeded: ${created} created, ${updated} updated.`);
+    })
+    .catch((err) => console.error("Starduct seed skipped:", err.message));
 });
