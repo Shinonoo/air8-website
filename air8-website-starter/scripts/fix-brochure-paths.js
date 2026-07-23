@@ -154,6 +154,17 @@ const IMAGES = {
   68: "wall_tubes.png",                  // had no image at all
 };
 
+// Same idea for Abie Tiger. Only the DS duct silencer can be fixed from
+// what we already hold: it is the same product family as the LF/LMF/MF
+// silencers that share this photo. The other five Abie products and all
+// seven Starduct ones are still waiting on real photos from the supplier
+// — deliberately NOT filled with a lookalike from a different product,
+// which would misrepresent what we supply. Until those arrive the card
+// falls back to a clean labelled tile, so nothing renders as broken.
+const IMAGES_ABIE = {
+  123: "duct_silencer.webp", // was ds_duct_silencer.png, which never existed
+};
+
 // One idempotent UPDATE per row. The "AND NOT (col <=> ?)" guard is a
 // null-safe comparison, so a row stops matching once it already holds the
 // right value — steady-state deploys do cheap no-op updates and nothing more.
@@ -173,13 +184,14 @@ async function applyMap(column, map, prefix) {
 async function fixBrochurePaths() {
   const brochures = await applyMap("brochure_url", BROCHURES, "brochures/elta_fans/");
   const images = await applyMap("primary_image_url", IMAGES, "images/elta_fans/");
-  return brochures + images;
+  const abie = await applyMap("primary_image_url", IMAGES_ABIE, "images/abie_tiger/");
+  return brochures + images + abie;
 }
 
-// BROCHURES/IMAGES are exported so a test can assert every mapped file
-// actually exists on disk — a typo here is otherwise invisible until a
-// customer clicks Download and gets a 404.
-module.exports = { fixBrochurePaths, BROCHURES, IMAGES };
+// The maps are exported so a test can assert every mapped file actually
+// exists on disk — a typo here is otherwise invisible until a customer
+// clicks Download and gets a 404.
+module.exports = { fixBrochurePaths, BROCHURES, IMAGES, IMAGES_ABIE };
 
 // Allow running it directly too: `node scripts/fix-brochure-paths.js`
 if (require.main === module) {
