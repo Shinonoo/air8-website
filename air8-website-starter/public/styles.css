@@ -303,7 +303,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   grid-template-columns: auto auto;
   column-gap: 1rem;
   align-items: center;
+  /* Now a link out to the manufacturer's own site — reset the anchor
+     defaults so it still reads as plain brand copy, not a hyperlink. */
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease;
 }
+.partner:hover { transform: translateY(-3px); }
+.partner:hover .partner__name { color: var(--amber); }
 
 .partner__logo {
   grid-column: 1;
@@ -325,6 +332,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--navy);
   white-space: nowrap;
   line-height: 1.15;
+  transition: color 0.15s ease;
 }
 
 .partner__origin {
