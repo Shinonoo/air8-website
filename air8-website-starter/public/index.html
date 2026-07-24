@@ -38,11 +38,19 @@
 
 <body>
 
+  <!-- "Home"/logo links target this instead of the header itself. The
+       header is position:sticky, so once you've scrolled it's already
+       sitting at the top of the viewport — a browser jumping to "#top"
+       on the header sees it already there and doesn't scroll at all.
+       This sits before the header, at the true top of the document, so
+       the jump is never a no-op. -->
+  <div id="top" aria-hidden="true"></div>
+
   <!-- ============================================================
        HEADER / NAVIGATION
        Stays at the top. On mobile the links collapse behind a button.
        ============================================================ -->
-  <header class="site-header" id="top">
+  <header class="site-header">
     <div class="container header__inner">
       <a class="brand" href="#top" aria-label="AIR8 Industries home">
         <img class="brand__logo" src="images/air8_logo.webp" alt="AIR8 Industries Inc."
