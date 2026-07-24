@@ -28,6 +28,25 @@
   --font-body:    "Inter", system-ui, sans-serif;         /* paragraphs */
   --font-mono:    "Space Mono", monospace;                /* small labels */
 
+  /* Immersive surface gradients — the dark bands only.
+     RULES that keep this tasteful rather than gaudy:
+       1. Every gradient stays inside the brand blues (never crosses into
+          amber — the accent stays a single flat pop on top).
+       2. One light direction (from the top-left), so every band reads as
+          the same lit material instead of unrelated paint jobs.
+       3. Low luminance travel between stops — the depth is felt, not seen.
+     The white content sections deliberately stay flat; the contrast
+     between lit dark bands and calm light content is what reads as
+     "designed" instead of "cheap gradient everywhere". */
+  --grad-hero: linear-gradient(150deg, #1a86e0 0%, #0071ce 45%, #08376e 100%);
+  --grad-navy: linear-gradient(150deg, #1c3f75 0%, #12305f 55%, #0c2140 100%);
+  --grad-ink:  linear-gradient(170deg, #172942 0%, #0f1b2d 60%, #0a1320 100%);
+  /* Faint corner glows, layered ON TOP of the gradients above for a sense
+     of light in the surface. Cyan echoes the hero accent; the amber one is
+     a whisper of brand warmth, never a hard shape. */
+  --glow-cyan:  radial-gradient(55% 75% at 82% 12%, rgba(60, 224, 255, 0.18), transparent 68%);
+  --glow-amber: radial-gradient(45% 65% at 12% 88%, rgba(242, 169, 59, 0.12), transparent 70%);
+
   /* Spacing + shape */
   --radius: 14px;
   --max-width: 1120px;
@@ -82,7 +101,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .section { padding: var(--section-y) 0; }
 .section--tint { background: #eef2f8; }
-.section--dark { background: var(--navy-deep); }
+.section--dark { background: var(--glow-amber), var(--grad-navy); }
 
 /* Two-column grid that stacks on mobile (see responsive section) */
 .grid-2 {
@@ -136,7 +155,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
-.btn--primary { background: orange ; color: #fff; }
+/* Was the raw CSS keyword `orange` (#ffa500) — a brighter, greener orange
+   than the brand --amber (#f2a93b) the rest of the site uses, so the hero
+   buttons never quite matched the nav's "Get a quote" pill. Now a subtle
+   amber gradient built from the brand token: same colour family, a touch
+   of top-lit dimension so the button feels raised. */
+.btn--primary { background: linear-gradient(180deg, #f4b352 0%, #ea9a29 100%); color: #fff; }
 .btn--primary:hover { background: var(--navy-deep); transform: translateY(-2px); }
 .btn--ghost { border-color: var(--navy); color: var(--navy); background: transparent; }
 .btn--ghost:hover { background: var(--navy); color: #fff; }
@@ -269,7 +293,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
    next brand's logo. Stacking the label on top hands the full width to
    the three partners so they fit in one clean row. */
 .partners__inner {
-  padding: 2rem 1.5rem;
+  /* Slim side padding (was 1.5rem): the .container around this already
+     supplies the page gutter, and the extra inner padding was squeezing
+     the three-column strip enough to wrap Starduct's long origin line on
+     a full desktop. The mobile breakpoint sets its own padding below. */
+  padding: 2rem 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -284,14 +312,24 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   text-align: center;
 }
 
+/* Three EQUAL columns rather than a centered flex row. The three brands
+   have different logo widths (Elta 68px, Abie 96px, Starduct 68px) and
+   very different origin lines ("Malaysia · Fans & Blowers" vs "Vietnam ·
+   Ductwork & MEP Accessories"), so as free-flowing flex items they were
+   different widths and bunched off-centre with uneven gaps. Equal columns
+   fix the centres at 1/6, 1/2 and 5/6 of the row — evenly spaced whatever
+   each brand's own width is — and each lockup is centred inside its third. */
 .partners__logos {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  justify-content: center;
-  /* wrap (not nowrap) so a too-narrow window wraps a brand to the next
-     line cleanly instead of overlapping the neighbour. */
-  flex-wrap: wrap;
-  gap: 1.25rem 2.25rem; /* row-gap  column-gap */
+  gap: 1rem;   /* the two column gaps eat into each third; 1.5rem left Starduct's lockup ~1px short of one line */
+  width: 100%;
+  /* Wide enough that on a full desktop each third fits the longest origin
+     ("Vietnam · Ductwork & MEP Accessories") on one line; narrower screens
+     shrink below this and let that line wrap. */
+  max-width: 1040px;
+  margin: 0 auto;
 }
 
 /* Each brand is a compact lockup: logo on the left, spanning two rows,
@@ -300,9 +338,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
    what lets all three sit side by side without shrinking/overlap. */
 .partner {
   display: grid;
-  grid-template-columns: auto auto;
+  /* Second track is minmax(0, auto) not plain auto: paired with max-width
+     below, that lets the text column shrink to its share of the column and
+     wrap, instead of the long "Vietnam · Ductwork & MEP Accessories" line
+     spilling past the edge on mid-width screens. */
+  grid-template-columns: auto minmax(0, auto);
   column-gap: 1rem;
   align-items: center;
+  justify-self: center;   /* centre the lockup inside its equal column */
+  max-width: 100%;        /* stay within the column so the text can wrap */
   /* Now a link out to the manufacturer's own site — reset the anchor
      defaults so it still reads as plain brand copy, not a hyperlink. */
   text-decoration: none;
@@ -340,7 +384,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   grid-row: 2;
   font-size: 0.78rem;
   color: var(--steel);
-  white-space: nowrap;
+  /* wrap (was nowrap) so the longest origin line drops to a second line on
+     a tight column instead of overflowing; roomy screens still keep it on
+     one line. */
+  white-space: normal;
+  text-wrap: pretty;
 }
 
 
@@ -415,7 +463,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .form__status.is-error { color: #c23b3b; }
 
 /* FOOTER */
-.footer { background: var(--ink); color: #aeb9c9; padding: 3.5rem 0 0; }
+.footer { background: var(--grad-ink); color: #aeb9c9; padding: 3.5rem 0 0; }
 .footer__grid {
   display: grid;
   grid-template-columns: 1.4fr 1fr 1.4fr;
@@ -460,7 +508,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .social-btn:hover { background: #fff; color: var(--navy); transform: translateY(-2px); }
 
 /* STATS BAND — trust-at-a-glance strip under the partner logos */
-.stats { background: var(--navy); color: #fff; }
+.stats { background: var(--glow-cyan), var(--grad-navy); color: #fff; }
 .stats__inner {
   display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 2rem; padding-top: 2.4rem; padding-bottom: 2.4rem;
@@ -624,7 +672,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 @media (max-width: 480px) {
   .partners__inner { padding: 1.25rem 1rem; flex-direction: column; align-items: stretch; gap: 0.75rem; }
   .partners__label { display: block; text-align: center; } /* re-shown as a heading above the list */
-  .partners__logos { flex-direction: column; align-items: stretch; flex-wrap: wrap; gap: 0; width: 100%; }
+  /* Base is now a 3-column grid; collapse it to one stacked column so the
+     brands read as a clean vertical list on a phone. */
+  .partners__logos { grid-template-columns: 1fr; align-items: stretch; gap: 0; width: 100%; max-width: none; }
 
   .partner {
     display: grid;
@@ -632,6 +682,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     grid-template-rows: auto auto;
     column-gap: 0.85rem;
     align-items: center;
+    justify-self: stretch;   /* fill the row rather than centre (overrides the desktop rule) */
     width: 100%;
     padding: 0.75rem 0;
   }
@@ -961,7 +1012,7 @@ body.is-leaving { opacity: 0; transition: opacity 0.18s ease; }
 }
 
 
-.hero { position: relative; overflow: hidden; --accent: #3ce0ff; background: #0071CE; }
+.hero { position: relative; overflow: hidden; --accent: #3ce0ff; background: var(--glow-cyan), var(--glow-amber), var(--grad-hero); }
 .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 .hero__inner { position: relative; z-index: 3; }
 .hero__title .line { display: block; }
