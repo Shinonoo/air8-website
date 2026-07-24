@@ -156,13 +156,28 @@ const IMAGES = {
 
 // Same idea for Abie Tiger. Only the DS duct silencer can be fixed from
 // what we already hold: it is the same product family as the LF/LMF/MF
-// silencers that share this photo. The other five Abie products and all
-// seven Starduct ones are still waiting on real photos from the supplier
-// — deliberately NOT filled with a lookalike from a different product,
-// which would misrepresent what we supply. Until those arrive the card
-// falls back to a clean labelled tile, so nothing renders as broken.
+// silencers that share this photo. The other five Abie products are still
+// waiting on real photos from the supplier — deliberately NOT filled with
+// a lookalike from a different product, which would misrepresent what we
+// supply. Until those arrive the card falls back to a clean labelled
+// tile, so nothing renders as broken.
 const IMAGES_ABIE = {
   123: "duct_silencer.webp", // was ds_duct_silencer.png, which never existed
+};
+
+// The seven Starduct line-level entries (ids 146-152) never had a photo
+// at all. Unlike Abie's gaps, this isn't a lookalike standing in for a
+// missing part — each one is a genuine Starduct photo of a product that
+// actually sits inside that exact line, already shipped for the 61-item
+// range these cards summarize (see scripts/starduct-products.js).
+const IMAGES_STARDUCT = {
+  146: "s_eid_ei_120.webp",  // Spiral & Rectangular Ductwork — EI120 rigid duct
+  147: "skd600.webp",        // Diffusers & Air Outlets — square ceiling diffuser
+  148: "s_mfsd_l210.webp",   // Fire & Smoke Dampers — motorised fire damper
+  149: "svcd_hq.webp",       // Volume Control Dampers (VCD)
+  150: "svav_s.webp",        // VAV Boxes — single duct VAV
+  151: "s_rc1.webp",         // Duct Silencers — round silencer
+  152: "slc.webp",           // Cable Trays & Duct Supports — cable tray
 };
 
 // Starduct's seven entries are whole product lines rather than single
@@ -199,8 +214,9 @@ async function fixBrochurePaths() {
   const brochures = await applyMap("brochure_url", BROCHURES, "brochures/elta_fans/");
   const images = await applyMap("primary_image_url", IMAGES, "images/elta_fans/");
   const abie = await applyMap("primary_image_url", IMAGES_ABIE, "images/abie_tiger/");
-  const starduct = await applyMap("brochure_url", BROCHURES_STARDUCT, "brochures/starduct/");
-  return brochures + images + abie + starduct;
+  const starductBrochures = await applyMap("brochure_url", BROCHURES_STARDUCT, "brochures/starduct/");
+  const starductImages = await applyMap("primary_image_url", IMAGES_STARDUCT, "images/starduct/");
+  return brochures + images + abie + starductBrochures + starductImages;
 }
 
 // The maps are exported so a test can assert every mapped file actually
@@ -212,6 +228,7 @@ module.exports = {
   IMAGES,
   IMAGES_ABIE,
   BROCHURES_STARDUCT,
+  IMAGES_STARDUCT,
 };
 
 // Allow running it directly too: `node scripts/fix-brochure-paths.js`
