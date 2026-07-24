@@ -426,7 +426,30 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding-top: 1.25rem; padding-bottom: 1.5rem;
   font-size: 0.8rem; color: #7c8aa0;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
 }
+
+/* products.html's footer never had layout rules of its own, so its brand
+   block, contact links and copyright just stacked as plain <div>s. Giving
+   it the same flex row as the homepage footer both fixes that and gives
+   the new Facebook button somewhere sensible to sit. */
+.footer__inner {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1.25rem; padding: 2.5rem 0;
+}
+.footer__meta { display: flex; align-items: center; gap: 1.25rem; font-size: 0.9rem; flex-wrap: wrap; }
+.footer__meta a:hover { color: #fff; }
+
+/* Round icon-only button for outbound social links — same treatment as
+   .modal__close (circular, subtle border/background) but tuned for the
+   dark footer instead of the light modal. */
+.social-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0; width: 38px; height: 38px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08); color: #fff;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.social-btn:hover { background: #fff; color: var(--navy); transform: translateY(-2px); }
 
 /* STATS BAND — trust-at-a-glance strip under the partner logos */
 .stats { background: var(--navy); color: #fff; }
@@ -777,9 +800,15 @@ body.modal-open {
 }
 .modal__panel {
   position: relative; z-index: 1;
-  width: 100%; max-width: 880px; max-height: 90vh; overflow: auto;
+  width: 100%; max-width: 1040px; max-height: 90vh; overflow: auto;
   background: var(--surface); border-radius: var(--radius);
-  display: grid; grid-template-columns: 1fr 1fr;
+  /* Details side a little wider than the photo — at an even 1fr/1fr split
+     the details column was too narrow to hold both action buttons on one
+     line even on a large monitor, since the modal itself caps out at a
+     fixed width instead of growing with the viewport. (Measured: at the
+     original 880px/1fr-1fr the two buttons needed ~450px but only had
+     ~368px; even the first widening to 960px/1.2fr left them ~3px short.) */
+  display: grid; grid-template-columns: 1fr 1.25fr;
   box-shadow: 0 30px 80px rgba(15, 27, 45, 0.35);
 }
 .modal__media { min-height: 360px; }
@@ -797,9 +826,22 @@ body.modal-open {
 .modal__name { font-size: clamp(1.4rem, 3vw, 1.9rem); color: var(--navy); margin-bottom: 0.85rem; }
 .modal__desc { color: var(--steel); line-height: 1.6; }
 
-.modal__specs { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.4rem; }
-.spec { background: #eef2f8; border-radius: 10px; padding: 0.8rem 1rem; display: flex; flex-direction: column; gap: 0.15rem; min-width: 92px; }
-.spec strong { font-family: var(--font-display); color: var(--ink); font-size: 1rem; }
+/* A grid (not flex) so every pill in a row shares the same column width —
+   flex sized each one to its own text, so "material" sat in a tiny pill
+   next to "Extruded aluminium A6063-T5" in a much wider one and the row
+   read as a mismatched jumble rather than a spec sheet. */
+.modal__specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+}
+.spec {
+  background: #eef2f8; border-radius: 10px; padding: 0.8rem 1rem;
+  display: flex; flex-direction: column; justify-content: center; gap: 0.15rem;
+  min-height: 64px;
+}
+.spec strong { font-family: var(--font-display); color: var(--ink); font-size: 1rem; overflow-wrap: break-word; }
 .spec em { font-style: normal; color: var(--steel); font-size: 0.78rem; }
 
 .modal__actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.9rem; flex-wrap: wrap; }

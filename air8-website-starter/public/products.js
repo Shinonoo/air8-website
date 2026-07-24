@@ -23,6 +23,11 @@ const modalClose = document.getElementById("modalClose");
 let lastFocused = null;
 let scrollLockY = 0;
 
+// Bumped every time a product opens, so a slow HEAD check from a product
+// the visitor has since clicked away from can't reveal a stale Download
+// button pointing at someone else's PDF (see openModal below).
+let modalRequestId = 0;
+
 const PAGE_SIZE = 25;
 let catalogPage = 1;
 
@@ -205,14 +210,27 @@ function openModal(p) {
   }
 
   const dl = document.getElementById("modalDownload");
+  // Reset unconditionally, every open — otherwise a product with no
+  // brochure keeps the previous product's href sitting on the button.
+  // It stayed invisible here, but the async check below used to be able
+  // to un-hide it later against the wrong product (see the requestId
+  // guard: without it, a slow HEAD response for a PDF that DOES exist
+  // could reveal the button after the visitor had already moved on to a
+  // product that doesn't have one, download link still pointed at the
+  // old product's PDF).
+  dl.hidden = true;
+  dl.removeAttribute("href");
+  const requestId = ++modalRequestId;
   if (p.brochure) {
     dl.href = p.brochure;
     // Stay hidden until we've confirmed the PDF actually exists — a
     // missing file used to fall through to a bare, unstyled copy of the
     // homepage instead of downloading anything (see server.js catch-all).
-    dl.hidden = true;
     fetch(p.brochure, { method: "HEAD" })
-      .then(function (res) { if (res.ok) dl.hidden = false; })
+      .then(function (res) {
+        if (requestId !== modalRequestId) return; // a different product opened meanwhile
+        if (res.ok) dl.hidden = false;
+      })
       .catch(function () {});
     dl.onclick = function () {
       fetch("/api/track-download", {
@@ -221,8 +239,6 @@ function openModal(p) {
         body: JSON.stringify({ product: p.name }),
       }).catch(function () {});
     };
-  } else {
-    dl.hidden = true;
   }
 
   document.getElementById("modalActions").hidden = false;
